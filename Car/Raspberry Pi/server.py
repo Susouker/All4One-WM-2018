@@ -1,9 +1,7 @@
 import socket
 import time
 from threading import Thread
-import consoleLog as cl
-import struct
-from array import array
+import consoleLog as CL
 
 conns = []
 
@@ -12,7 +10,7 @@ def setup(config, callbackFunctions):
     callbacks = callbackFunctions
     PORT = int(config.get('server', 'port'))
     HOSTNAME = config.get('server', 'hostname')
-    
+
     socketHandler = SocketHandler()
     socketHandler.setDaemon(True)
     socketHandler.start()
@@ -23,74 +21,66 @@ class ConnHandler(Thread):
         Thread.__init__(self)
         self.conn = conn
         self.addr = addr
-    
+
     def run(self):
         while 1:
             try:
                 r = self.conn.recv(1024)
                 if r == b'':
                     break
-                cl.log(cl.SERVERMSG, "(%s) Reveived %s" % (self.addr[0], r.decode("utf8")))
-                
-                msg = r.decode("utf-8").split('!')
-                for s in msg:
-                    if s != '':
-                        receiveData(s[1:], s[:1])
-                
+                CL.log(CL.SERVERMSG, "(%s) Reveived %s" % (self.addr[0], r.decode()))
+                r = r.split(b'$')
+                for msg in r:
+                    if msg != b'':
+                        receiveData(msg[:1], msg[1:])
+
             except ConnectionResetError:
-                cl.log(cl.ERROR, "In conn recv")
+                CL.log(CL.ERROR, "Connection Reset")
                 break
-        
+
         self.conn.close()
-        cl.log(cl.SERVER, "(%s) Client disconnected" % self.addr[0])
+        CL.log(CL.SERVER, "(%s) Client disconnected" % self.addr[0])
         global conns
         conns.remove(self.conn)
 
 
 class SocketHandler(Thread):
-    def __init__(self):
-        Thread.__init__(self)
-    
     def run(self):
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         try:
             self.s.bind((HOSTNAME, PORT))
-            cl.log(cl.SERVER, "Bind was succesful")
+            CL.log(CL.SERVER, "Bind was succesful")
         except socket.error as msg:
-            cl.log(cl.ERROR, "Bind failed; " + str(msg))
+            CL.log(CL.ERROR, "Bind failed; " + str(msg))
             return
 
-        self.s.listen(5)
-        connections = 0
-        SocketHandler
+        self.s.listen()
         while 1:
             (conn, addr) = self.s.accept()
             global conns
             conns.append(conn)
-            
+
             connHandler = ConnHandler(conn, addr)
             connHandler.setDaemon(True)
             connHandler.start()
-            
-            cl.log(cl.SERVER, "(%s) Client connected; Total number of connections is %s" % (addr[0], len(conns)))
+            CL.log(CL.SERVER, "(%s) Client connected; Total number of connections is %s" % (addr[0], len(conns)))
 
 
-def receiveData(data, type):
-    cl.log(cl.SERVERMSG, "Received: %s; %s" % (type, data))
-    
+def receiveData(type, data):
+    CL.log(CL.SERVERMSG, "Received: %s; %s" % (type, data))
     global callbacks
-    callbacks[type](data.split(','))
+    try:
+        callbacks[type](data)
+    except KeyError:
+        CL.log(CL.ERROR, "Invalid identifier %s" % type)
 
 
-def sendData(data, type):
-    data = str(data).translate({ord(c): None for c in ' ()'})
-    cl.log(cl.SERVERMSG, "Sending: %s; %s" % (type, data))
-    
-    s = "!" + type + data
-    s = s.encode()
+def sendData(type, data):
+    CL.log(CL.SERVERMSG, "Sending: %s; %s" % (type, data))
+    msg = b'$' + type + data
     for conn in conns:
         try:
-            conn.send(s)
+            conn.send(msg)
         except:
-            cl.log(cl.ERROR, "Send failed")
+            CL.log(CL.ERROR, "Send failed")

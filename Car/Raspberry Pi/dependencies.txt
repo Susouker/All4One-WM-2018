@@ -1,0 +1,4 @@
+smbus
+
+only used for debugging:
+webcolors
