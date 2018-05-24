@@ -28,7 +28,7 @@ class ConnHandler(Thread):
                 r = self.conn.recv(1024)
                 if r == b'':
                     break
-                CL.log(CL.SERVERMSG, "(%s) Reveived %s" % (self.addr[0], r.decode()))
+                #CL.log(CL.SERVERMSG, "(%s) Reveived %s" % (self.addr[0], r.decode()))
                 r = r.split(b'$')
                 for msg in r:
                     if msg != b'':

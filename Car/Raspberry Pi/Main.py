@@ -113,7 +113,7 @@ def setup():
         GPIO.setStatus(1)
 
 def globalVars():
-    global startTime, lastTime, lastSend, lastLog
+    global startTime, lastTime, lastSend, lastLog, input
     startTime = time.time()
     lastTime = 0
     lastSend = 0

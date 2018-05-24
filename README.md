@@ -24,7 +24,7 @@ Erstes Byte gibt den Typ der Nachricht an. Das Auto (Server) sendet Großbuchsta
 | R     | Rotation           | Die Rotation des Autos               | 2xfloat - 8  byte | Rechts-Links, Vorne-Hinten      | °       |
 | V     | VGC                | Die Höhen der vier Zylinder          | 4xfloat - 16 byte | FR, FL, BR, BL                  | mm      |
 | s     | einfache Lenkung   | Die Werte der Fernbedienung          | 2xfloat - 8  byte | Lenkwinkel, Gas                 | °/TBD   |
-| c     | komplexe Lenkung   | Die Werte der Fernbedienung          | 3xfloat - 12 byte | Komplexe Lenkung (2), Ga        | °/TBD   |
+| c     | komplexe Lenkung   | Die Werte der Fernbedienung          | 3xfloat - 12 byte | Komplexe Lenkung (2), Gas       | °/TBD   |
 
 #### Beispiele
 
