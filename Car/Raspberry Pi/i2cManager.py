@@ -29,7 +29,7 @@ def setBuzzer(val):
 
 def setServo(servo, val):
     try:
-        bus.write_byte_data(address_SC, servo, val)
+        bus.write_byte_data(address_SC, servo, chr(int(val)))
     except:
         cl.log(cl.ERROR, "During sending servo Data")
         return
