@@ -1,7 +1,14 @@
-USE_VI = True #wether or not to display the visualization
-USE_I2C = False #wether or not to use i2c
-USE_GPIO = False #wether or not to use the gpio output
-INPUT = 'V' #V to use the visualization as input
+IS_CAR = True;
+if IS_CAR:
+    USE_VI = False #wether or not to display the visualization
+    USE_I2C = True #wether or not to use i2c
+    USE_GPIO = True #wether or not to use the gpio output
+    INPUT = 'I' #V to use the visualization as input
+else:
+    USE_VI = True #wether or not to display the visualization
+    USE_I2C = False #wether or not to use i2c
+    USE_GPIO = False #wether or not to use the gpio output
+    INPUT = 'V' #V to use the visualization as input
 LOGGING = False
 FRAMERATE = 15
 SENDRATE = 0.05
@@ -28,7 +35,7 @@ import time
 
 IS_ACTIVE = True
 compMode = 0 #1=competition
-steeringMode = 1 #0Simple 1Complex
+steeringMode = -1 #0Simple 1Complex -1Extrasimple
 buzz = False
 
 
@@ -54,18 +61,29 @@ def loop():
 
     #12c Stuff
     if USE_I2C:
-        light = I2C.readLightSensor()[0]
+        #light = I2C.readLightSensor()[0]
         if buzz:
             I2C.setBuzzer(False)
     else:
         light = 0
 
     #Calculate RM based on input
-    r = RM.calcC(input[0], input[1], input[2]) if steeringMode == 1 else RM.calcS(input[0], input[2])
+    if steeringMode == 0:
+        r = RM.calcS(input[0], input[2])
+    if steeringMode == 1:
+        r = RM.calcC(input[0], input[1], input[2])
+    if steeringMode == -1:
+        r = RM.calcES(input[0], input[2])
 
     #Update
     if USE_VI:
        VI.update(r, light)
+
+    #12c Stuff
+    if USE_I2C:
+        I2C.setServo('SF', r[0])
+        I2C.setServo('SF', r[2])
+    return
 
     #Log data
     if LOGGING and (currentTime - lastLog) > (1/LOGRATE):

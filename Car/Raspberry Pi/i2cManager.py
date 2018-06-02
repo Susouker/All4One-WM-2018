@@ -1,4 +1,5 @@
 address_LS = 0x31
+address_SC = 0x36
 
 
 import consoleLog as cl
@@ -26,3 +27,12 @@ def setLight(val, auto):
 def setBuzzer(val):
     data = (0 << 7) + (val << 2)
     bus.write_byte(address_LS, data) #10000234 1=L/B 2=Buzzer 3=LightAuto 4=Lighton/off
+
+def setServo(servo, val):
+    if servo == 'SF':
+        servo == 0x11
+    if servo == 'SB':
+        servo == 0x12
+    if servo == 'TB':
+        servo == 0xff
+    bus.write_byte_data(address_SC, servo, val)
