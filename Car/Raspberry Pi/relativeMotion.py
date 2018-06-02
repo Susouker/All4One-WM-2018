@@ -31,7 +31,7 @@ def calcS(angle, pwr):
 def calcES(angle, pwr):
     angleB = -angle + 90
     angleF = angle + 90
-    return ((angle, angle, -angle, -angle), (pwr, pwr, pwr, pwr))
+    return ((angleF, angleF, -angleB, -angleB), (pwr, pwr, pwr, pwr))
 
 
 def calcC(tcAngle, tcDist, pwr):

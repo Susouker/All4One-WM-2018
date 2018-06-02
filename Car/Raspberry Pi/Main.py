@@ -34,66 +34,64 @@ import struct
 import time
 
 IS_ACTIVE = True
-compMode = 0 #1=competition
 steeringMode = -1 #0Simple 1Complex -1Extrasimple
 buzz = False
 
 
 #--------------------LOOP--------------------
 def loop():
-    global startTime, lastTime, lastSend, lastLog
+    try:
+        global startTime, lastTime, lastSend, lastLog
 
-    currentTime = time.time() - startTime
-    deltaTime = currentTime - lastTime
-    if deltaTime < (1/FRAMERATE):
-        return
-    lastTime = currentTime
-
-    #Get input from Mouse Curosr if vi is used
-    global input
-    if INPUT == 'V' and USE_VI:
-        try:
-            input = VI.getInput()
-        except:
-            global IS_ACTIVE
-            IS_ACTIVE = False
+        currentTime = time.time() - startTime
+        deltaTime = currentTime - lastTime
+        if deltaTime < (1/FRAMERATE):
             return
+        lastTime = currentTime
 
-    #12c Stuff
-    if USE_I2C:
-        #light = I2C.readLightSensor()[0]
-        if buzz:
-            I2C.setBuzzer(False)
-    else:
+        #Get input from Mouse Curosr if vi is used
+        global input
+        if INPUT == 'V' and USE_VI:
+            try:
+                input = VI.getInput()
+            except:
+                global IS_ACTIVE
+                IS_ACTIVE = False
+                return
+
         light = 0
 
-    #Calculate RM based on input
-    if steeringMode == 0:
-        r = RM.calcS(input[0], input[2])
-    if steeringMode == 1:
-        r = RM.calcC(input[0], input[1], input[2])
-    if steeringMode == -1:
-        r = RM.calcES(input[0], input[2])
+        #Calculate RM based on input
+        if steeringMode == 0:
+            r = RM.calcS(input[0], input[2])
+        if steeringMode == 1:
+            r = RM.calcC(input[0], input[1], input[2])
+        if steeringMode == -1:
+            r = RM.calcES(input[0], input[2])
 
-    #Update
-    if USE_VI:
-       VI.update(r, light)
+        #Update
+        if USE_VI:
+           VI.update(r, light)
 
-    #12c Stuff
-    if USE_I2C:
-        I2C.setServo(0x11, r[0][0])
-        I2C.setServo(0x12, r[0][2])
-    
-    #Log data
-    if LOGGING and (currentTime - lastLog) > (1/LOGRATE):
-        LO.log(currentTime, light, input, r)
-        lastLog += 1/LOGRATE
+        #12c Stuff
+        if USE_I2C:
+            I2C.setServo(0x11, r[0][0])
+            I2C.setServo(0x12, r[0][2])
 
-    #Send Data over TCP
-    if (currentTime - lastSend) > (1/SENDRATE):
-        SE.sendData(b'A' ,struct.pack('4f', *r[0]))
-        SE.sendData(b'T' ,struct.pack('4f', *r[1]))
-        lastSend += 1/SENDRATE
+        #Log data
+        if LOGGING and (currentTime - lastLog) > (1/LOGRATE):
+            LO.log(currentTime, light, input, r)
+            lastLog += 1/LOGRATE
+
+        #Send Data over TCP
+        if (currentTime - lastSend) > (1/SENDRATE):
+            SE.sendData(b'A' ,struct.pack('4f', *r[0]))
+            SE.sendData(b'T' ,struct.pack('4f', *r[1]))
+            lastSend += 1/SENDRATE
+    except KeyboardInterrupt:
+        global IS_ACTIVE
+        IS_ACTIVE = False
+        return
 
 
 #--------------------SETUP--------------------
@@ -136,17 +134,6 @@ def globalVars():
     lastSend = 0
     lastLog = 0
     input = (0, 0, 0)
-
-
-#--------------------|--------------------
-def setCompetitionMode(b):
-    compMode = 1 if b else 0
-    if USE_GPIO:
-        GPIO.setMode(b)
-    if b:
-        if USE_I2C:
-            I2C.setLightmode(True, True)
-        buzz = True
 
 
 #--------------------CALLBACKS--------------------
