@@ -81,8 +81,8 @@ def loop():
 
     #12c Stuff
     if USE_I2C:
-        I2C.setServo('SF', r[0])
-        I2C.setServo('SF', r[2])
+        I2C.setServo(0x11, r[0][0])
+        I2C.setServo(0x12, r[0][2])
     return
 
     #Log data

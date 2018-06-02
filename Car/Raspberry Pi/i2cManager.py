@@ -1,7 +1,6 @@
 address_LS = 0x31
 address_SC = 0x36
 
-
 import consoleLog as cl
 import smbus
 import time
@@ -29,10 +28,8 @@ def setBuzzer(val):
     bus.write_byte(address_LS, data) #10000234 1=L/B 2=Buzzer 3=LightAuto 4=Lighton/off
 
 def setServo(servo, val):
-    if servo == 'SF':
-        servo == 0x11
-    if servo == 'SB':
-        servo == 0x12
-    if servo == 'TB':
-        servo == 0xff
-    bus.write_byte_data(address_SC, servo, val)
+    try:
+        bus.write_byte_data(address_SC, servo, val)
+    except:
+        cl.log(cl.ERROR, "During sending servo Data")
+        return
