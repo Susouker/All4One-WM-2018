@@ -83,8 +83,7 @@ def loop():
     if USE_I2C:
         I2C.setServo(0x11, r[0][0])
         I2C.setServo(0x12, r[0][2])
-    return
-
+    
     #Log data
     if LOGGING and (currentTime - lastLog) > (1/LOGRATE):
         LO.log(currentTime, light, input, r)
@@ -113,7 +112,7 @@ def setup():
         LO.setupFile(config)
         CL.log(CL.INFO, "Log file has been created")
 
-    SE.setup(config, {b's':cbSimpleSteering, b'c':cbComplexSteering, b'r':cbR})
+    SE.setup(config, {b's':cbSimpleSteering, b'c':cbComplexSteering, b'r':cbR, b'e':cbES})
     CL.log(CL.INFO, "server is setup")
 
     RM.setup(config)
@@ -151,6 +150,13 @@ def setCompetitionMode(b):
 
 
 #--------------------CALLBACKS--------------------
+def cbES(vals):
+    if len(vals) == 8: #2 float á 4 bytes
+        global input, steeringMode
+        steeringMode = -1
+        r = struct.unpack('2f', vals)
+        input = (r[0], 0, r[1])
+        print(input)
 def cbSimpleSteering(vals):
     if len(vals) == 8: #2 float á 4 bytes
         global input, steeringMode
