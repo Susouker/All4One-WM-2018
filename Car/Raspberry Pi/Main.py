@@ -21,6 +21,7 @@ if USE_VI:
     import visualizer as VI
 if USE_I2C:
     import i2cManager as I2C
+    import servoAngles as SA
 if USE_GPIO:
     import gpioManager as GPIO
 if LOGGING:
@@ -75,8 +76,7 @@ def loop():
 
         #12c Stuff
         if USE_I2C:
-            I2C.setServo(0x11, r[0][0])
-            I2C.setServo(0x12, r[0][2])
+            SA.setServoAngles('WM2017', r)
 
         #Log data
         if LOGGING and (currentTime - lastLog) > (1/LOGRATE):

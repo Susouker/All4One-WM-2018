@@ -87,7 +87,7 @@ def motion(event):
     #Send Data over TCP
     global lastSend
     if (time.time() - lastSend) > (1/SENDRATE):
-        sendData(b's', struct.pack('2f', angle, lenght))
+        sendData(b'e', struct.pack('2f', angle, lenght))
         print ("%s, %s" % (angle, lenght))
         lastSend = time.time()
 

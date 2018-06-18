@@ -29,8 +29,8 @@ def calcS(angle, pwr):
     return ((angleR, angleL, -angleR, -angleL), power(pwr, pwrR, pwrL, pwrR, pwrL))
 
 def calcES(angle, pwr):
-    angleB = -angle + 90
-    angleF = angle + 90
+    angleB = -angle
+    angleF = angle
     return ((angleF, angleF, -angleB, -angleB), (pwr, pwr, pwr, pwr))
 
 
