@@ -9,6 +9,8 @@ def setServoAngles(car, R):
         oldCar(R)
 
 def oldCar(R):
+    global lastAngles
+    
     steeringFront = R[0][0] + 90
     steeringBack = R[0][2] + 90
     motor = R[1][0] * 90 + 90
