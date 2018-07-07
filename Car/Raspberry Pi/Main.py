@@ -34,7 +34,6 @@ import configparser
 import struct
 import time
 
-IS_ACTIVE = True
 steeringMode = -1 #0Simple 1Complex -1Extrasimple
 buzz = False
 
@@ -42,7 +41,7 @@ buzz = False
 #--------------------LOOP--------------------
 def loop():
     try:
-        global startTime, lastTime, lastSend, lastLog
+        global startTime, lastTime, lastSend, lastLog, IS_ACTIVE
 
         currentTime = time.time() - startTime
         deltaTime = currentTime - lastTime
@@ -56,7 +55,6 @@ def loop():
             try:
                 input = VI.getInput()
             except:
-                global IS_ACTIVE
                 IS_ACTIVE = False
                 return
 
@@ -89,7 +87,6 @@ def loop():
             SE.sendData(b'T' ,struct.pack('4f', *r[1]))
             lastSend += 1/SENDRATE
     except KeyboardInterrupt:
-        global IS_ACTIVE
         IS_ACTIVE = False
         return
 
@@ -128,7 +125,8 @@ def setup():
         GPIO.setStatus(1)
 
 def globalVars():
-    global startTime, lastTime, lastSend, lastLog, input
+    global startTime, lastTime, lastSend, lastLog, input, IS_ACTIVE
+    IS_ACTIVE = True
     startTime = time.time()
     lastTime = 0
     lastSend = 0
@@ -136,13 +134,7 @@ def globalVars():
     input = (0, 0, 0)
 
 
-#--------------------CALLBACKS--------------------
-handlerFunctions = {
-    b's':cbSimpleSteering,
-    b'c':cbComplexSteering,
-    b'R':cbRotation,
-    b'e':cbExtraSimpleSteering
-}
+#--------------------Handler Functions--------------------
 def cbExtraSimpleSteering(data):
     global input, steeringMode
     steeringMode = -1
@@ -169,6 +161,13 @@ def cbRotation(data):
     vgc = VGC.calcVGC(r, 0)
     SE.sendData(b'V', struct.pack('ffff', *vgc))
     return data[4*2:]
+
+handlerFunctions = {
+    b's': cbSimpleSteering,
+    b'c': cbComplexSteering,
+    b'R': cbRotation,
+    b'e': cbExtraSimpleSteering,
+}
 
 
 #--------------------MAIN--------------------
