@@ -12,14 +12,14 @@ canvasWidth = 640
 canvasHeight = 360
 scl = 300
 
-def receiveData(type, data):
-    print ("Received: %s; %s" % (type, data))
+def receiveData(data):
+    print ("Received: %s" % (data))
 
 
-def sendData(type, data):
+def sendData(packetID, data):
     lastSend = time.time()
-    print ("Sending: %s; %s" % (type, data))
-    msg = b'$' + type + data
+    print ("Sending: %s; %s" % (packetID, data))
+    msg = packetID + data
     client.send(msg)
 
 
@@ -27,14 +27,9 @@ class SocketHandler(Thread):
     def run(self):
         while 1:
             try:
-                r = client.recv(1024)
-                if r == b'':
-                    break
-                #print ("Reveived %s" % (r.decode()))
-                r = r.split(b'$')
-                for msg in r:
-                    if msg != b'':
-                        receiveData(msg[:1], msg[1:])
+                r = self.conn.recv(1024)
+                #CL.log(CL.SERVERMSG, "(%s) Reveived %s" % (self.addr[0], r.decode()))
+                receiveData(r)
             except ConnectionResetError:
                 print ("connection closed")
                 break

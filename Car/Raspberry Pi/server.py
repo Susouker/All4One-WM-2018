@@ -63,7 +63,7 @@ class SocketHandler(Thread):
 
 
 def receiveData(data):
-    CL.log(CL.SERVERMSG, "Received: %s; %s" % (type, data))
+    CL.log(CL.SERVERMSG, "Received: %s" % (data))
     global callbacks
     while len(data) > 0:
         packetID = data[:1]
@@ -73,9 +73,9 @@ def receiveData(data):
             CL.log(CL.ERROR, "Invalid identifier %s" % packetID)
 
 
-def sendData(type, data):
-    CL.log(CL.SERVERMSG, "Sending: %s; %s" % (type, data))
-    msg = type + data
+def sendData(packetID, data):
+    CL.log(CL.SERVERMSG, "Sending: %s; %s" % (packetID, data))
+    msg = packetID + data
     for conn in conns:
         try:
             conn.send(msg)
