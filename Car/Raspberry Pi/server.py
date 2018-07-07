@@ -7,7 +7,7 @@ conns = []
 
 def setup(config, callbackFunctions):
     global callbacks, PORT, HOSTNAME
-    callbacks = callbackFunctions
+    handlerFunctions = callbackFunctions
     PORT = int(config.get('server', 'port'))
     HOSTNAME = config.get('server', 'hostname')
 
@@ -64,11 +64,11 @@ class SocketHandler(Thread):
 
 def receiveData(data):
     CL.log(CL.SERVERMSG, "Received: %s" % (data))
-    global callbacks
+    global handlerFunctions
     while len(data) > 0:
         packetID = data[:1]
-        if packetID in callbackFunctions:
-            data = callbackFunctions[packetID](data[1:])
+        if packetID in handlerFunctions:
+            data = handlerFunctions[packetID](data[1:])
         else:
             CL.log(CL.ERROR, "Invalid identifier %s" % packetID)
 
