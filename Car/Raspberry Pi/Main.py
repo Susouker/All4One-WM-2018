@@ -110,7 +110,7 @@ def setup():
         LO.setupFile(config)
         CL.log(CL.INFO, "Log file has been created")
 
-    SE.setup(config, {b's':cbSimpleSteering, b'c':cbComplexSteering, b'r':cbR, b'e':cbES})
+    SE.setup(config, handlerFunctions)
     CL.log(CL.INFO, "server is setup")
 
     RM.setup(config)
@@ -137,29 +137,38 @@ def globalVars():
 
 
 #--------------------CALLBACKS--------------------
-def cbES(vals):
-    if len(vals) == 8: #2 float á 4 bytes
-        global input, steeringMode
-        steeringMode = -1
-        r = struct.unpack('2f', vals)
-        input = (r[0], 0, r[1])
-        print(input)
-def cbSimpleSteering(vals):
-    if len(vals) == 8: #2 float á 4 bytes
-        global input, steeringMode
-        steeringMode = 0
-        r = struct.unpack('2f', vals)
-        input = (r[0], 0, r[1])
-def cbComplexSteering(vals):
-    if len(vals) == 12: #2 float á 4 bytes
-        global input, steeringMode
-        steeringMode = 1
-        r = struct.unpack('3f', vals)
-        input = (r[0], r[1], r[2])
-def cbR(vals):
-    if len(vals) == 8: #2 floats á 4 bytes
-        vgc = VGC.calcVGC(struct.unpack('2f', vals), 0)
-        SE.sendData(b'V', struct.pack('4f', *vgc))
+handlerFunctions = {
+    b's':cbSimpleSteering,
+    b'c':cbComplexSteering,
+    b'R':cbRotation,
+    b'e':cbExtraSimpleSteering
+}
+def cbExtraSimpleSteering(data):
+    global input, steeringMode
+    steeringMode = -1
+    r = struct.unpack('ff', data[0:4*2])
+    input = (r[0], 0, r[1])
+    return data[4*2:]
+
+def cbSimpleSteering(data):
+    global input, steeringMode
+    steeringMode = 0
+    r = struct.unpack('ff', data[0:4*2])
+    input = (r[0], 0, r[1])
+    return data[4*2:]
+
+def cbComplexSteering(data):
+    global input, steeringMode
+    steeringMode = 1
+    r = struct.unpack('fff', data[0:4*3])
+    input = (r[0], r[1], r[2])
+    return data[4*3:]
+
+def cbRotation(data):
+    r = struct.unpack('ff', data[0:4*2])
+    vgc = VGC.calcVGC(r, 0)
+    SE.sendData(b'V', struct.pack('ffff', *vgc))
+    return data[4*2:]
 
 
 #--------------------MAIN--------------------

@@ -13,9 +13,9 @@ Weitere Geräte, wie Fernbedienungen und Tablets sind über das WLAN mit dem RP 
 
 ### TCP
 
-Einzelne Nachrichten beginnen mit / sind getrennt durch ein '$' (ASCII: 36 oder 0x24).
+Das erste Byte gibt den Typ der Nachricht an (packetID). Jede packetID hat eine eindeutige Länge, sodass klar ist, wo die nächste Nachricht anfängt.
 
-Erstes Byte gibt den Typ der Nachricht an. Das Auto (Server) sendet Großbuchstaben und die anderen Geräte (Clients) senden Kleinbuchstaben.
+Das Auto (Server) sendet Großbuchstaben und die anderen Geräte (Clients) senden Kleinbuchstaben.
 
 | Identifier | Name          | Nutzung                              | Größe             | Format                          | Einheit |
 | :---- | :----------------- | :----------------------------------- | :---------------  | :------------------------------ | :------ |
@@ -30,11 +30,13 @@ Erstes Byte gibt den Typ der Nachricht an. Das Auto (Server) sendet Großbuchsta
 
 RP sendet aktuelle Lenkwinkel und Motorleisungen:
 ```
-     $A\xf7eu@\xc2w\x8a@\xb7\xb3\x83A\x0b\x99\x93A$TL\x0ev\xbfe\x14Z\xbf\x00\x00\x80\xbf\x99=e\xbf
-HEX: 24 41 f7 65 75 40 c2 77 8a 40 b7 b3 83 41 0b 99 93 41 24 54 4c 0e 76 bf 65 14 5a bf 00 00 80 bf 99 3d 65 bf
+Werte: A (3.834348440170288, 4.327118873596191, 16.462751388549805, 18.44972801208496) T (-0.9611556529998779, -0.8518736958503723, -1.0, -0.8954711556434631)
+       A\xf7eu@\xc2w\x8a@\xb7\xb3\x83A\x0b\x99\x93ATL\x0ev\xbfe\x14Z\xbf\x00\x00\x80\xbf\x99=e\xbf
+HEX:   41 f7 65 75 40 c2 77 8a 40 b7 b3 83 41 0b 99 93 41 54 4c 0e 76 bf 65 14 5a bf 00 00 80 bf 99 3d 65 bf
 ```
 Fernbedienung sendet Lenkwinkel und Gas in simplen Modus:
 ```
-     $s\x00\x00\xdcAfff?
-HEX: 24 73 00 00 dc 41 66 66 66 3f
+Werte: s (27.5, 0.9)
+       s\x00\x00\xdcAfff?
+HEX:   73 00 00 dc 41 66 66 66 3f
 ```

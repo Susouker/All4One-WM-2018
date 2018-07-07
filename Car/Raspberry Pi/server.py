@@ -26,13 +26,8 @@ class ConnHandler(Thread):
         while 1:
             try:
                 r = self.conn.recv(1024)
-                if r == b'':
-                    break
                 #CL.log(CL.SERVERMSG, "(%s) Reveived %s" % (self.addr[0], r.decode()))
-                r = r.split(b'$')
-                for msg in r:
-                    if msg != b'':
-                        receiveData(msg[:1], msg[1:])
+                receiveData(r)
 
             except ConnectionResetError:
                 CL.log(CL.ERROR, "Connection Reset")
@@ -67,18 +62,20 @@ class SocketHandler(Thread):
             CL.log(CL.SERVER, "(%s) Client connected; Total number of connections is %s" % (addr[0], len(conns)))
 
 
-def receiveData(type, data):
+def receiveData(data):
     CL.log(CL.SERVERMSG, "Received: %s; %s" % (type, data))
     global callbacks
-    try:
-        callbacks[type](data)
-    except KeyError:
-        CL.log(CL.ERROR, "Invalid identifier %s" % type)
+    while len(data) > 0:
+        packetID = data[:1]
+        if packetID in callbackFunctions:
+            data = callbackFunctions[packetID](data[1:])
+        else:
+            CL.log(CL.ERROR, "Invalid identifier %s" % packetID)
 
 
 def sendData(type, data):
     CL.log(CL.SERVERMSG, "Sending: %s; %s" % (type, data))
-    msg = b'$' + type + data
+    msg = type + data
     for conn in conns:
         try:
             conn.send(msg)
