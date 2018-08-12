@@ -77,14 +77,15 @@ def loop():
 
 
 def setInput(input, steeringMode):
-    print(degrees(input[0]))
     global r, rChanged
     if steeringMode == 0:
         r = relativeMotion.calcS(input[0], input[2])
-    if steeringMode == 1:
+    elif steeringMode == 1:
         r = relativeMotion.calcC(input[0], input[1], input[2])
-    if steeringMode == -1:
+    elif steeringMode == -1:
         r = relativeMotion.calcES(input[0], input[2])
+    elif steeringMode == -4:                                #set r directly
+        r = input
 
     if 'USE_VISUALIZER' in PROPERTIES:
         rChanged = 1

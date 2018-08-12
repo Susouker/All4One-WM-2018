@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import kotlinx.android.synthetic.main.select_layout.*
 
 class SelectFragment : Fragment() {
 
@@ -15,5 +16,14 @@ class SelectFragment : Fragment() {
 
 
         return super.onCreateView(inflater, container, savedInstanceState)
+    }
+
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        button.setOnClickListener { _: View ->
+            var message: ByteArray = byteArrayOf('d'.toByte(), 'D'.toByte())
+            (activity.applicationContext as GlobalState).sendTcpMessage(message)
+        }
     }
 }

@@ -1,10 +1,11 @@
 import struct
-
-SOCKET_AS_INPUT = 1
+import routines
+import imp
 
 def setup(config, _cbFunctions):
     global cbFunctions
     cbFunctions = _cbFunctions
+
 
 def parse(data):
     while len(data) > 0:
@@ -14,29 +15,31 @@ def parse(data):
         else:
             CL.log(CL.ERROR, "Invalid identifier %s" % packetID)
 
+
 def cbExtraSimpleSteering(data):
-    if(SOCKET_AS_INPUT):
-        r = struct.unpack('ff', data[0:4*2])
-        cbFunctions[0]((r[0], 0, r[1]), -1)
+    r = struct.unpack('ff', data[0:4*2])
+    cbFunctions[0]((r[0], 0, r[1]), -1)
     return data[4*2:]
+
 
 def cbSimpleSteering(data):
-    if(SOCKET_AS_INPUT):
-        r = struct.unpack('ff', data[0:4*2])
-        cbFunctions[0]((r[0], 0, r[1]), 0)
+    r = struct.unpack('ff', data[0:4*2])
+    cbFunctions[0]((r[0], 0, r[1]), 0)
     return data[4*2:]
 
+
 def cbComplexSteering(data):
-    if(SOCKET_AS_INPUT):
-        r = struct.unpack('fff', data[0:4*3])
-        cbFunctions[0]((r[0], r[1], r[2]), 1)
+    r = struct.unpack('fff', data[0:4*3])
+    cbFunctions[0]((r[0], r[1], r[2]), 1)
     return data[4*3:]
+
 
 def cbRotation(data):
     r = struct.unpack('ff', data[0:4*2])
     vgc = VGC.calcVGC(r, 0)
     SE.sendData(b'V', struct.pack('ffff', *vgc))
     return data[4*2:]
+
 
 def cbOptions(data):
     identifier = data[0:1]
@@ -48,14 +51,17 @@ def cbOptions(data):
 
     return data[2:]
 
+
 def cbVGCModeSelect(data):
     value = data[0]
     cbFunctions[1]('VGC Mode', value)
     return data[1:]
 
-def cbRoutinen(data):
+
+def cbRoutines(data):
     value = data[0]
-    #TODO führe Routine aus
+    imp.reload(routines)
+    routines.do(cbFunctions)
     return data[1:]
 
 handlerFunctions = {
@@ -65,5 +71,5 @@ handlerFunctions = {
     b'R': cbRotation,
     b'e': cbExtraSimpleSteering,
     b'v': cbVGCModeSelect,
-    b'd': cbRoutinen,
+    b'd': cbRoutines,
 }

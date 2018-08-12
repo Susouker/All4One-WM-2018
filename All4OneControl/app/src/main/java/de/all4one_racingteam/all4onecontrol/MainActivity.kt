@@ -48,11 +48,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
         if ((applicationContext as GlobalState).isTcpClientConnected()) {
-            menu!!.getItem(1).isEnabled = false
-            menu.getItem(2).isEnabled = true
+            menu!!.getItem(2).isEnabled = false
+            menu.getItem(3).isEnabled = true
         } else {
-            menu!!.getItem(1).isEnabled = true
-            menu.getItem(2).isEnabled = false
+            menu!!.getItem(2).isEnabled = true
+            menu.getItem(3).isEnabled = false
         }
 
         return super.onPrepareOptionsMenu(menu)

@@ -32,10 +32,9 @@ class DriveFragment : Fragment() {
 
             var x = motionEvent.x.roundToInt()
             var y = motionEvent.y.roundToInt()
-            var relativeX = 0f
             var relativeY = 0f
 
-            relativeX = Math.min(Math.max((x.toFloat() / view2.width - 0.5f) * 2, -1f), 1f)
+            var relativeX = Math.min(Math.max((x.toFloat() / view2.width - 0.5f) * 2, -1f), 1f)
 
             if (motionEvent.action == MotionEvent.ACTION_UP){
                 //x = view2.width / 2
