@@ -1,99 +1,18 @@
-IS_CAR = True;
-if IS_CAR:
-    USE_VI = False #wether or not to display the visualization
-    USE_I2C = True #wether or not to use i2c
-    USE_GPIO = True #wether or not to use the gpio output
-    INPUT = 'I' #V to use the visualization as input
-else:
-    USE_VI = True #wether or not to display the visualization
-    USE_I2C = False #wether or not to use i2c
-    USE_GPIO = False #wether or not to use the gpio output
-    INPUT = 'V' #V to use the visualization as input
-LOGGING = False
-FRAMERATE = 15
-SENDRATE = 0.05
-LOGRATE = 5
 CONFIG_URL = "config.conf"
+LOGGING = False
+SENDRATE = 0.005
+LOGRATE = 5
 
-import relativeMotion as RM
-import VGC
-if USE_VI:
-    import visualizer as VI
-if USE_I2C:
-    import i2cManager as I2C
-    import servoAngles as SA
-if USE_GPIO:
-    import gpioManager as GPIO
-if LOGGING:
-    import logger as LO
-import consoleLog as CL
-import server as SE
+#--------------------INITIALSETUP--------------------
+if __name__ == '__main__':
+    from math import *
+    import struct
+    import time
+    import consoleLog as CL
+    import configparser
 
-from math import *
-import configparser
-import struct
-import time
+    CL.log(CL.INFO, "Beginning initialsetup")
 
-steeringMode = -1 #0Simple 1Complex -1Extrasimple
-buzz = False
-
-
-#--------------------LOOP--------------------
-def loop():
-    try:
-        global startTime, lastTime, lastSend, lastLog, IS_ACTIVE
-
-        currentTime = time.time() - startTime
-        deltaTime = currentTime - lastTime
-        if deltaTime < (1/FRAMERATE):
-            return
-        lastTime = currentTime
-
-        #Get input from Mouse Curosr if vi is used
-        global input
-        if INPUT == 'V' and USE_VI:
-            try:
-                input = VI.getInput()
-            except:
-                IS_ACTIVE = False
-                return
-
-        light = 0
-
-        #Calculate RM based on input
-        if steeringMode == 0:
-            r = RM.calcS(input[0], input[2])
-        if steeringMode == 1:
-            r = RM.calcC(input[0], input[1], input[2])
-        if steeringMode == -1:
-            r = RM.calcES(input[0], input[2])
-
-        #Update
-        if USE_VI:
-           VI.update(r, light)
-
-        #12c Stuff
-        if USE_I2C:
-            SA.setServoAngles('WM2017', r)
-
-        #Log data
-        if LOGGING and (currentTime - lastLog) > (1/LOGRATE):
-            LO.log(currentTime, light, input, r)
-            lastLog += 1/LOGRATE
-
-        #Send Data over TCP
-        if (currentTime - lastSend) > (1/SENDRATE):
-            SE.sendData(b'A' ,struct.pack('4f', *r[0]))
-            SE.sendData(b'T' ,struct.pack('4f', *r[1]))
-            lastSend += 1/SENDRATE
-    except KeyboardInterrupt:
-        IS_ACTIVE = False
-        return
-
-
-#--------------------SETUP--------------------
-def setup():
-    CL.log(CL.INFO, "Beginning setup")
     try:
         config = configparser.ConfigParser()
         config.read(CONFIG_URL)
@@ -101,80 +20,123 @@ def setup():
     except:
         CL.log(CL.ERROR, "while loading config")
 
+
+    PROPERTIES = []
+    if int(config.get('input', 'visualizer')):
+        PROPERTIES.append('VISUALIZER_AS_INPUT')
+    if int(config.get('input', 'socket')):
+        PROPERTIES.append('SOCKET_AS_INPUT')
+    if 'VISUALIZER_AS_INPUT' in PROPERTIES or int(config.get('output', 'visualizer')):
+        PROPERTIES.append('USE_VISUALIZER')
+    if int(config.get('output', 'GPIO')):
+        PROPERTIES.append('USE_GPIO')
+
+    import relativeMotion
+    import VGC
+    import server
+    if 'USE_VISUALIZER' in PROPERTIES:
+        import visualizer
+    if 'USE_GPIO' in PROPERTIES:
+        import i2cManager as I2C
+        import servoAngles
+    if 'USE_GPIO' in PROPERTIES:
+        import gpioManager as GPIO
+    if 'LOGGING' in PROPERTIES:
+        import logger
+
+
+#--------------------LOOP--------------------
+def loop():
+    try:
+        global startTime, lastSend, lastLog, IS_ACTIVE
+
+        #Get input from Mouse Curosr if visualizer is used
+        global input, light
+        if 'VISUALIZER_AS_INPUT' in PROPERTIES:
+            try:
+                setInput(visualizer.getInput())
+            except:
+                IS_ACTIVE = False
+                return
+
+        #Update
+        if 'USE_VISUALIZER' in PROPERTIES:
+            global rChanged
+            if rChanged:
+                rChanged = 0
+                visualizer.setInput(r, light)
+            visualizer.update()
+
+        if LOGGING and (time.time() - startTime - lastLog) > (1/LOGRATE):
+            LO.log(currentTime, light, input, r)
+            lastLog += 1/LOGRATE
+
+    except KeyboardInterrupt:
+        IS_ACTIVE = False
+        return
+
+
+def setInput(input, steeringMode):
+    print(degrees(input[0]))
+    global r, rChanged
+    if steeringMode == 0:
+        r = relativeMotion.calcS(input[0], input[2])
+    if steeringMode == 1:
+        r = relativeMotion.calcC(input[0], input[1], input[2])
+    if steeringMode == -1:
+        r = relativeMotion.calcES(input[0], input[2])
+
+    if 'USE_VISUALIZER' in PROPERTIES:
+        rChanged = 1
+
+    if 'USE_GPIO' in PROPERTIES:
+        SA.setServoAngles('WM2017', r)
+
+    #Send Data over TCP
+    global lastSend, startTime
+    if (time.time() - startTime - lastSend) > (1/SENDRATE):
+        server.sendData(b'A' ,struct.pack('4f', *r[0]))
+        server.sendData(b'T' ,struct.pack('4f', *r[1]))
+        lastSend += 1/SENDRATE
+
+
+#--------------------SETUP--------------------
+def setup():
+    CL.log(CL.INFO, "Beginning setup")
     globalVars()
 
+    print(PROPERTIES)
+
     if LOGGING:
-        LO.setupFile(config)
-        CL.log(CL.INFO, "Log file has been created")
-
-    SE.setup(config, handlerFunctions)
-    CL.log(CL.INFO, "server is setup")
-
-    RM.setup(config)
+        logger.setupFile(config)
+    server.setup(config, [setInput])
+    relativeMotion.setup(config)
     VGC.setup(config)
-    if USE_GPIO:
+    if 'USE_GPIO' in PROPERTIES:
         GPIO.setup(config)
-    CL.log(CL.INFO, "rm, vgc and gpio are setup")
-
-    if USE_VI:
-        VI.setup(config)
-        CL.log(CL.INFO, "Visualization is setup")
-
-    CL.log(CL.INFO, "setup is complete")
-    if USE_GPIO:
+    if 'USE_VISUALIZER' in PROPERTIES:
+        visualizer.setup(config)
+    if 'USE_GPIO' in PROPERTIES:
         GPIO.setStatus(1)
 
+    CL.log(CL.INFO, "setup is complete")
+
+
 def globalVars():
-    global startTime, lastTime, lastSend, lastLog, input, IS_ACTIVE
+    global startTime, lastSend, lastLog, IS_ACTIVE, light
     IS_ACTIVE = True
     startTime = time.time()
-    lastTime = 0
     lastSend = 0
     lastLog = 0
-    input = (0, 0, 0)
+    light = 0
 
 
-#--------------------Handler Functions--------------------
-def cbExtraSimpleSteering(data):
-    global input, steeringMode
-    steeringMode = -1
-    r = struct.unpack('ff', data[0:4*2])
-    input = (r[0], 0, r[1])
-    return data[4*2:]
-
-def cbSimpleSteering(data):
-    global input, steeringMode
-    steeringMode = 0
-    r = struct.unpack('ff', data[0:4*2])
-    input = (r[0], 0, r[1])
-    return data[4*2:]
-
-def cbComplexSteering(data):
-    global input, steeringMode
-    steeringMode = 1
-    r = struct.unpack('fff', data[0:4*3])
-    input = (r[0], r[1], r[2])
-    return data[4*3:]
-
-def cbRotation(data):
-    r = struct.unpack('ff', data[0:4*2])
-    vgc = VGC.calcVGC(r, 0)
-    SE.sendData(b'V', struct.pack('ffff', *vgc))
-    return data[4*2:]
-
-handlerFunctions = {
-    b's': cbSimpleSteering,
-    b'c': cbComplexSteering,
-    b'R': cbRotation,
-    b'e': cbExtraSimpleSteering,
-}
-
-
-#--------------------MAIN--------------------
-setup()
-CL.log(CL.INFO, "loop starting")
-while IS_ACTIVE:
-    loop()
-CL.log(CL.INFO, "loop stopping")
-if USE_GPIO:
-    GPIO.atexit()
+if __name__ == '__main__':
+    setup()
+    setInput((0, 0, 0), 0)
+    CL.log(CL.INFO, "loop starting")
+    while IS_ACTIVE:
+        loop()
+    CL.log(CL.INFO, "loop stopping")
+    if USE_GPIO:
+        GPIO.atexit()

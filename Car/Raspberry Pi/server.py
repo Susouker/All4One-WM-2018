@@ -2,12 +2,13 @@ import socket
 import time
 from threading import Thread
 import consoleLog as CL
+import packetParser
 
 conns = []
 
-def setup(config, callbackFunctions):
-    global callbacks, PORT, HOSTNAME
-    handlerFunctions = callbackFunctions
+def setup(config, cbFunctions):
+    packetParser.setup(config, cbFunctions)
+    global PORT, HOSTNAME
     PORT = int(config.get('server', 'port'))
     HOSTNAME = config.get('server', 'hostname')
 
@@ -25,9 +26,10 @@ class ConnHandler(Thread):
     def run(self):
         while 1:
             try:
-                r = self.conn.recv(1024)
+                msg = self.conn.recv(1024)
                 #CL.log(CL.SERVERMSG, "(%s) Reveived %s" % (self.addr[0], r.decode()))
-                receiveData(r)
+                CL.log(CL.SERVERMSG, "Received: %s" % (msg))
+                packetParser.parse(msg)
 
             except ConnectionResetError:
                 CL.log(CL.ERROR, "Connection Reset")
@@ -60,17 +62,6 @@ class SocketHandler(Thread):
             connHandler.setDaemon(True)
             connHandler.start()
             CL.log(CL.SERVER, "(%s) Client connected; Total number of connections is %s" % (addr[0], len(conns)))
-
-
-def receiveData(data):
-    CL.log(CL.SERVERMSG, "Received: %s" % (data))
-    global handlerFunctions
-    while len(data) > 0:
-        packetID = data[:1]
-        if packetID in handlerFunctions:
-            data = handlerFunctions[packetID](data[1:])
-        else:
-            CL.log(CL.ERROR, "Invalid identifier %s" % packetID)
 
 
 def sendData(packetID, data):

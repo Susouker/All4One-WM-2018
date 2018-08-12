@@ -19,12 +19,20 @@ Das Auto (Server) sendet Großbuchstaben und die anderen Geräte (Clients) sende
 
 | Identifier | Name          | Nutzung                              | Größe             | Format                          | Einheit |
 | :---- | :----------------- | :----------------------------------- | :---------------  | :------------------------------ | :------ |
-| A     | Angle              | Die Winkel der vier Räder            | 4xfloat - 16 byte | FR, FL, BR, BL                  | °       |
+| A     | Angle              | Die Winkel der vier Räder            | 4xfloat - 16 byte | FR, FL, BR, BL                  | rad     |
 | T     | Throttle           | Die Motorleisungen der vier Räder    | 4xfloat - 16 byte | FR, FL, BR, BL                  | TBD     |
-| R     | Rotation           | Die Rotation des Autos               | 2xfloat - 8  byte | Rechts-Links, Vorne-Hinten      | °       |
+| R     | Rotation           | Die Rotation des Autos               | 2xfloat - 8  byte | Rechts-Links, Vorne-Hinten      | rad     |
 | V     | VGC                | Die Höhen der vier Zylinder          | 4xfloat - 16 byte | FR, FL, BR, BL                  | mm      |
-| s     | einfache Lenkung   | Die Werte der Fernbedienung          | 2xfloat - 8  byte | Lenkwinkel, Gas                 | °/TBD   |
-| c     | komplexe Lenkung   | Die Werte der Fernbedienung          | 3xfloat - 12 byte | Komplexe Lenkung (2), Gas       | °/TBD   |
+| s     | einfache Lenkung   | Die Werte der Fernbedienung          | 2xfloat - 8  byte | Lenkwinkel, Gas                 | rad/TBD |
+| c     | komplexe Lenkung   | Die Werte der Fernbedienung          | 3xfloat - 12 byte | Komplexe Lenkung (2), Gas       | rad/TBD |
+| t     | Optionen Toggle    | z.B. An- und Ausschalten des Buzzers | 2xbyte  - 2  byte | Identifier, Wert                | -       |
+
+#### Optionen
+
+| Identifier | Name   | Format                        |
+| :---- | :---------- | :---------------------------- |
+| L     | Licht       | 0: aus; 1: an; 2: automatisch |
+| B     | Buzzer      | 0: aus; 1: an; 2: automatisch |
 
 #### Beispiele
 
@@ -40,3 +48,16 @@ Werte: s (27.5, 0.9)
        s\x00\x00\xdcAfff?
 HEX:   73 00 00 dc 41 66 66 66 3f
 ```
+
+## ToDo
+
+#### Android App
+
+- [ ] Verbindungsstatusicon
+- [ ] IP und Port in Settings
+- [ ] VGC-Mode-Auswahl-Knöpfe
+
+#### RPi Python
+
+- [ ] "Routinen" (sowas wie einmal Lenkung von ganz rechts nach ganz links oder einen kleinen Tanz etc.)
+- [ ] Steuerung des Autos

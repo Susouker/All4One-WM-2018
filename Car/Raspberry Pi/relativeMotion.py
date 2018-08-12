@@ -13,15 +13,15 @@ def calcS(angle, pwr):
     pwrL = 1
     pwrR = 1
     if angle != 0:
-        a1 = radians(abs(angle))
+        a1 = abs(angle)
         r1 = b / sin(a1)
         r2 = sqrt(pow((sqrt(r1*r1-b*b)+w),2) + b*b)
         a2 = asin(b/r2)
 
         right = (angle > 0)
 
-        angleR = angle       if right else -degrees(a2)
-        angleL = degrees(a2) if right else angle
+        angleR = angle       if right else -a2
+        angleL = a2 if right else angle
 
         pwrR = r1/r2 if right else 1
         pwrL = 1     if right else r1/r2
@@ -51,7 +51,7 @@ def calcC(tcAngle, tcDist, pwr):
         angleBL = tcAngle+90
 
     else:
-        a = radians(tcAngle)
+        a = tcAngle
         x = tcDist * sin(a)
         y = tcDist * cos(a)
 
@@ -72,10 +72,10 @@ def calcC(tcAngle, tcDist, pwr):
         pwrBR = -rBR / r
         pwrBL = rBL / r
 
-        angleFR = -90 + degrees(atan2(w/2 - x, b-y))
-        angleFL = 90 + degrees(atan2(-w/2 - x, b-y))
-        angleBR = -90 + degrees(atan2(w/2 - x, -b-y))
-        angleBL = 90 + degrees(atan2(-w/2 - x, -b-y))
+        angleFR = -90 + (atan2(w/2 - x, b-y))
+        angleFL = 90 + (atan2(-w/2 - x, b-y))
+        angleBR = -90 + (atan2(w/2 - x, -b-y))
+        angleBL = 90 + (atan2(-w/2 - x, -b-y))
 
     if (angleFR > 90):
        angleFR = angleFR - 180
