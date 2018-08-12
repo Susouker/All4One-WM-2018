@@ -1,30 +1,35 @@
 import RPi.GPIO as GPIO   # Import the GPIO library.
 import time               # Import time library
 
-GPIO.setmode(GPIO.BCM)  # Set Pi to use pin number when referencing GPIO pins.
-                          # Can use GPIO.setmode(GPIO.BCM) instead to use
-                          # Broadcom SOC channel names.
+def setup(config):
+    GPIO.setmode(GPIO.BCM)  # Set Pi to use pin number when referencing GPIO pins.
+    global multiplier
+    multiplier = int(float(config.get('voltages', 'motor')) / float(config.get('voltages','battery')) * 100)
+    pwm = []
 
-GPIO.setup(14, GPIO.OUT)  # Set GPIO pin 12 to output mode.
-pwm = GPIO.PWM(14, 100)   # Initialize PWM on pwmPin 100Hz frequency
+    pin1 = int(config.get('GPIO', 'motor1_pin1'))
+    pin2 = int(config.get('GPIO', 'motor1_pin2'))
+    GPIO.setup(pin1, GPIO.OUT)
+    GPIO.setup(pin2, GPIO.OUT)
+    pwm.append(GPIO.PWM(pin1, 100))   # Initialize PWM on pwmPin 100Hz frequency/3
+    pwm.append(GPIO.PWM(pin2, 100))   # Initialize PWM on pwmPin 100Hz frequency/3
+    pwm[0].start(0)
+    pwm[1].start(0)
 
 # main loop of program
-print("\nPress Ctl C to quit \n")  # Print blank line before and after message.
-dc=0                               # set dc variable to 0 for 0%
-pwm.start(dc)                      # Start PWM with 0% duty cycle
+def setMotorPower(value):
+    if value < 0:
+        pwm1 = pwm[0]
+        pwm2 = pwm[1]
+    else:
+        pwm1 = pwm[1]
+        pwm2 = pwm[0]
 
-try:
-  while True:                      # Loop until Ctl C is pressed to stop.
-    for dc in range(0, 101, 5):    # Loop 0 to 100 stepping dc by 5 each loop
-      pwm.ChangeDutyCycle(dc)
-      time.sleep(0.05)             # wait .05 seconds at current LED brightness
-      print(dc)
-    for dc in range(95, 0, -5):    # Loop 95 to 5 stepping dc down by 5 each loop
-      pwm.ChangeDutyCycle(dc)
-      time.sleep(0.05)             # wait .05 seconds at current LED brightness
-      print(dc)
-except KeyboardInterrupt:
-  print("Ctl C pressed - ending program")
+    dc = value * multiplier
+    pwm1.ChangeDutyCycle(dc)
+    pwm2.ChangeDutyCycle(0)
 
-pwm.stop()                         # stop PWM
-GPIO.cleanup()                     # resets GPIO ports used back to input mode
+
+def atexit():
+    pwm.stop()                         # stop PWM
+    GPIO.cleanup()                     # resets GPIO ports used back to input mode

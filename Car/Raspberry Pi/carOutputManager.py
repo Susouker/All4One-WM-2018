@@ -1,5 +1,8 @@
 import i2cManager as I2C
+import pwmMotorcontrol as PWM
 
+def setup(config):
+    PWM.setup(config)
 #    steeringFront, steeringBack, motor
 lastAngles = (-180, -180, -180)
 servoAdresses = (0x11, 0x12, 0x00)
@@ -26,4 +29,7 @@ def oldCar(r):
     lastAngles = angles
 
 def prototyp(r):
-    
+    PWM.setMotorPower([1][0])
+
+def atexit():
+    PWM.atexit

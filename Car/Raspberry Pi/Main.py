@@ -38,7 +38,7 @@ if __name__ == '__main__':
         import visualizer
     if 'USE_GPIO' in PROPERTIES:
         import i2cManager as I2C
-        import servoAngles
+        import carOutputManager
     if 'USE_GPIO' in PROPERTIES:
         import gpioManager as GPIO
     if 'LOGGING' in PROPERTIES:
@@ -90,7 +90,7 @@ def setInput(input, steeringMode):
         rChanged = 1
 
     if 'USE_GPIO' in PROPERTIES:
-        SA.setServoAngles('P', r)
+        carOutputManager.setServoAngles('P', r)
 
     #Send Data over TCP
     global lastSend, startTime
@@ -117,6 +117,7 @@ def setup():
     VGC.setup(config)
     if 'USE_GPIO' in PROPERTIES:
         GPIO.setup(config)
+        carOutputManager.setup(config)
     if 'USE_VISUALIZER' in PROPERTIES:
         visualizer.setup(config)
     if 'USE_GPIO' in PROPERTIES:
@@ -141,5 +142,6 @@ if __name__ == '__main__':
     while IS_ACTIVE:
         loop()
     CL.log(CL.INFO, "loop stopping")
-    if USE_GPIO:
+    if 'USE_GPIO' in PROPERTIES:
         GPIO.atexit()
+        carOutputManager.atexit()
