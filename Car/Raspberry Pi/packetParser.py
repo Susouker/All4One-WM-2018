@@ -41,20 +41,21 @@ def cbRotation(data):
 def cbOptions(data):
     identifier = data[0:1]
     value = data[1]
-    print(identifier)
-    print(value)
     if (identifier == b'L'):
-        global light
-        light = value
+        cbFunctions[1]('Light', value)
     if (identifier == b'B'):
-        global buzz
-        buzz = value
+        d = 1
 
     return data[2:]
 
 def cbVGCModeSelect(data):
     value = data[0]
-    cbFunctions[1](value)
+    cbFunctions[1]('VGC Mode', value)
+    return data[1:]
+
+def cbRoutinen(data):
+    value = data[0]
+    #TODO führe Routine aus
     return data[1:]
 
 handlerFunctions = {
@@ -64,4 +65,5 @@ handlerFunctions = {
     b'R': cbRotation,
     b'e': cbExtraSimpleSteering,
     b'v': cbVGCModeSelect,
+    b'd': cbRoutinen,
 }

@@ -1,6 +1,6 @@
 from math import *
 
-mode = 0 #0=flat 1=hillclimb 2=tilted 3=articulation
+mode = 0
 
 width = 0.15
 wheelbase = 0.3

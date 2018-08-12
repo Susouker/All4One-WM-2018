@@ -1,31 +1,34 @@
 import RPi.GPIO as GPIO   # Import the GPIO library.
 import time               # Import time library
 
+
 def setup(config):
-    GPIO.setmode(GPIO.BCM)  # Set Pi to use pin number when referencing GPIO pins.
-    global multiplier, pwm
+    GPIO.setmode(GPIO.BCM)  # Set Pi to use bcm number when referencing GPIO pins.
+
+    global multiplier, motors
     multiplier = int(float(config.get('voltages', 'motor')) / float(config.get('voltages','battery')) * 100)
-    pwm = []
 
-    pin1 = int(config.get('GPIO', 'motor1_pin1'))
-    pin2 = int(config.get('GPIO', 'motor1_pin2'))
-    GPIO.setup(pin1, GPIO.OUT)
-    GPIO.setup(pin2, GPIO.OUT)
-    pwm.append(GPIO.PWM(pin1, 100))   # Initialize PWM on pwmPin 100Hz frequency/3
-    pwm.append(GPIO.PWM(pin2, 100))   # Initialize PWM on pwmPin 100Hz frequency/3
-    pwm[0].start(0)
-    pwm[1].start(0)
+    motors = []
+    for i in range(4):              # 4 Motoren und 4 Magnete #TODO 4 zu 8 ändern und die Magnete mit beachten
+        motor = []
+        for j in range(2):          # 2 Kabel pro Motor
+            pin = int(config.get('GPIO', 'motor%d_pin%d') % (i, j))
+            GPIO.setup(pin, GPIO.OUT)
+            pwm = GPIO.PWM(pin, 100)   # Initialize PWM on pin 100Hz frequency
+            pwm.start(0)
+            motor.append(pwm)
+        motors.append(motor)
 
-# main loop of program
-def setMotorPower(value):
-    global pwm
+
+def setMotorPower(motor, value):
+    global motors
     if value < 0:
         value *= -1
-        pwm1 = pwm[0]
-        pwm2 = pwm[1]
+        pwm1 = motors[motor][0]
+        pwm2 = motors[motor][1]
     else:
-        pwm1 = pwm[1]
-        pwm2 = pwm[0]
+        pwm1 = motors[motor][1]
+        pwm2 = motors[motor][0]
 
     dc = value * multiplier
     pwm1.ChangeDutyCycle(dc)

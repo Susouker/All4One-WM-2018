@@ -30,21 +30,18 @@ class DriveFragment : Fragment() {
 
         control_root.setOnTouchListener { view2: View, motionEvent: MotionEvent ->
 
-            //val X = motionEvent.rawX.roundToInt()
-            //val Y = motionEvent.rawY.roundToInt()
-
             var x = motionEvent.x.roundToInt()
             var y = motionEvent.y.roundToInt()
-            var _x = 0f
-            var _y = 0f
+            var relativeX = 0f
+            var relativeY = 0f
 
-            _x = Math.min(Math.max((x.toFloat() / view2.width - 0.5f) * 2, -1f), 1f)
+            relativeX = Math.min(Math.max((x.toFloat() / view2.width - 0.5f) * 2, -1f), 1f)
 
             if (motionEvent.action == MotionEvent.ACTION_UP){
                 //x = view2.width / 2
                 y = view2.height / 2
             } else {
-                 _y = Math.min(Math.max((y.toFloat() / view2.height - 0.5f) * -2, -1f), 1f)
+                 relativeY = Math.min(Math.max((y.toFloat() / view2.height - 0.5f) * -2, -1f), 1f)
             }
 
             var layoutParams = image_thingy.layoutParams as RelativeLayout.LayoutParams
@@ -55,10 +52,10 @@ class DriveFragment : Fragment() {
             layoutParams.removeRule(RelativeLayout.CENTER_IN_PARENT)
             image_thingy.layoutParams = layoutParams
 
-            var angle : Float = _x * Math.PI.toFloat() / 2
-            var speed : Float = _y
+            var angle : Float = relativeX * Math.PI.toFloat() / 2
+            var speed : Float = relativeY
 
-            Log.d("Drive Fragment", "moved to X: $x; Y:$y; _X:$_x; _Y:$_y")
+            Log.d("Drive Fragment", "moved to X: $x; Y:$y; _X:$relativeX; _Y:$relativeY")
             Log.d("Drive Fragment", "angle: $angle; speed: $speed")
 
             var byteBuffer = ByteBuffer.allocate(2 * 4)

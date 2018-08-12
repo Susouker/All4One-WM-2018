@@ -99,8 +99,15 @@ def setInput(input, steeringMode):
         server.sendData(b'T' ,struct.pack('4f', *r[1]))
         lastSend += 1/SENDRATE
 
-def setVGCMode(mode):
-    VGC.setMode(mode)
+
+def setProperty(property, value):
+    if property == 'VGC Mode':
+        VGC.setMode(value)
+    elif property == 'Light':
+        global light
+        light = value
+    else:
+        CL.log(CL.ERROR, "Property name not found: %s" % property)
 
 
 #--------------------SETUP--------------------
@@ -112,7 +119,7 @@ def setup():
 
     if LOGGING:
         logger.setupFile(config)
-    server.setup(config, [setInput, setVGCMode])
+    server.setup(config, [setInput, setProperty])
     relativeMotion.setup(config)
     VGC.setup(config)
     if 'USE_GPIO' in PROPERTIES:

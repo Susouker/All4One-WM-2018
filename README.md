@@ -2,7 +2,7 @@
 
 ## Überblick
 
-Das *Gehirn* des Autos ist ein Raspberry Pi 3B+ (RP).
+Das *Gehirn* des Autos ist ein Raspberry Pi (RP).
 Der RP macht alle notwendigen Berechnungen und dient als WLAN Router. Falls notwendig kommuniziert der RP mit anderen Geräten im Auto.
 
 Weitere Geräte, wie Fernbedienungen und Tablets sind über das WLAN mit dem RP verbunden und kommunizieren über TCP mit dem RP.
@@ -27,6 +27,7 @@ Das Auto (Server) sendet Großbuchstaben und die anderen Geräte (Clients) sende
 | c     | komplexe Lenkung   | Die Werte der Fernbedienung          | 3xfloat - 12 byte | Komplexe Lenkung (2), Gas       | rad/TBD |
 | t     | Optionen Toggle    | z.B. An- und Ausschalten des Buzzers | 2xbyte  - 2  byte | Identifier, Wert                | -       |
 | v     | VGC Mode           |                                      | 1xbyte  - 1  byte | Wert                            | -       |
+| d     | Routinen           | Automatisierte Abfolge von Kommandos | 1xbyte  - 1  byte | Wert                            | -       |
 
 #### Optionen
 
@@ -34,6 +35,21 @@ Das Auto (Server) sendet Großbuchstaben und die anderen Geräte (Clients) sende
 | :---- | :---------- | :---------------------------- |
 | L     | Licht       | 0: aus; 1: an; 2: automatisch |
 | B     | Buzzer      | 0: aus; 1: an; 2: automatisch |
+
+#### VGC Mode
+
+| Wert  | Name         | Beschreibung                                       |
+| :---- | :----------- | :------------------------------------------------- |
+| F     | Flat         | Alle Magnete aus -> ganz unten                     |
+| A     | Articulation | Keine Ahnung was, das wird sich noch herausstellen |
+| 0     |              | vielleicht noch mehr vielleicht auch nicht         |
+
+#### Routinen
+
+| Wert  | Name         | Beschreibung                                                                                                   |
+| :---- | :----------- | :------------------------------------------------------------------------------------------------------------- |
+| D     | Demo         | Einmal alle Räder von rechts nach links lenken. Jeden VGC Zylinder nach oben und unten und Lichter an aus etc. |
+| T     |              | vielleicht noch mehr vielleicht auch nicht         |
 
 #### Beispiele
 
