@@ -1,4 +1,9 @@
+time
+math
+struct
+configparser
+threading
+socket
 smbus
-
-only used for debugging:
-webcolors
+gpiozero
+tkinter
