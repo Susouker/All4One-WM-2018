@@ -16,7 +16,7 @@ class GlobalState : Application(){
                     Log.d("TCP Client", "Response: $message")
                 }
             })
-            mTcpClient!!.run("192.168.178.40", 14044)
+            mTcpClient!!.run("192.168.178.159", 14044)
         }
     }
 

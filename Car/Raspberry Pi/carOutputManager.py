@@ -7,7 +7,7 @@ def setup(config):
 lastAngles = (-180, -180, -180)
 servoAdresses = (0x11, 0x12, 0x00)
 
-def setServoAngles(car, r):
+def setCarOutput(car, r):
     if car == 'WM2017':
         oldCar(r)
     if car == 'P':
@@ -29,7 +29,7 @@ def oldCar(r):
     lastAngles = angles
 
 def prototyp(r):
-    PWM.setMotorPower([1][0])
+    PWM.setMotorPower(r[1][0])
 
 def atexit():
     PWM.atexit

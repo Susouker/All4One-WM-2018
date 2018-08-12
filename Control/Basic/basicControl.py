@@ -6,8 +6,8 @@ from tkinter import *
 from math import *
 
 PORT = 14044
-#HOST = '192.168.178.48'
-HOST = 'localhost'
+HOST = '192.168.178.159'
+#HOST = 'localhost'
 SENDRATE = 30
 canvasWidth = 640
 canvasHeight = 360

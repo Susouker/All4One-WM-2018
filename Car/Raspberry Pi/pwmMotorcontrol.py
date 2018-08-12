@@ -20,6 +20,7 @@ def setup(config):
 def setMotorPower(value):
     global pwm
     if value < 0:
+        value *= -1
         pwm1 = pwm[0]
         pwm2 = pwm[1]
     else:

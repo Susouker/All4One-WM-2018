@@ -90,7 +90,7 @@ def setInput(input, steeringMode):
         rChanged = 1
 
     if 'USE_GPIO' in PROPERTIES:
-        carOutputManager.setServoAngles('P', r)
+        carOutputManager.setCarOutput('P', r)
 
     #Send Data over TCP
     global lastSend, startTime
