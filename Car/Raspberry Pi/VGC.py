@@ -20,7 +20,7 @@ def setMode(m):
 def calcVGC(rotation, current):
     if mode == 0:
         calcVGCSimple(rotation, current)
-    else if mode == 1:
+    elif mode == 1:
         calcVGCFlat()
 
 def calcVGCFlat():
@@ -30,7 +30,7 @@ def calcVGCSimple(rotation, current):
     slope = (rotation[0], rotation[1]) #implement current
     print(slope)
 
-    diff = ((tan(radians(slope[0]))*wheelbase), (tan(radians(slope[1]))*width))
+    diff = ((tan(slope[0])*wheelbase), (tan(slope[1])*width))
 
     FR = MAX
     FL = MAX

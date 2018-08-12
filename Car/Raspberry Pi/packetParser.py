@@ -17,7 +17,7 @@ def parse(data):
 def cbExtraSimpleSteering(data):
     if(SOCKET_AS_INPUT):
         r = struct.unpack('ff', data[0:4*2])
-        Main.setInput((r[0], 0, r[1]), -1)
+        cbFunctions[0]((r[0], 0, r[1]), -1)
     return data[4*2:]
 
 def cbSimpleSteering(data):
@@ -29,7 +29,7 @@ def cbSimpleSteering(data):
 def cbComplexSteering(data):
     if(SOCKET_AS_INPUT):
         r = struct.unpack('fff', data[0:4*3])
-        Main.setInput((r[0], r[1], r[2]), 1)
+        cbFunctions[0]((r[0], r[1], r[2]), 1)
     return data[4*3:]
 
 def cbRotation(data):

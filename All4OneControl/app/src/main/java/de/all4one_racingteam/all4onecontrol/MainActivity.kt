@@ -50,8 +50,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-
-
         if ((applicationContext as GlobalState).isTcpClientConnected()) {
             menu!!.getItem(1).isEnabled = false
             menu.getItem(2).isEnabled = true

@@ -8,7 +8,7 @@ from math import *
 PORT = 14044
 #HOST = '192.168.178.48'
 HOST = 'localhost'
-SENDRATE = 10
+SENDRATE = 30
 canvasWidth = 640
 canvasHeight = 360
 scl = 300
@@ -49,9 +49,9 @@ def connect():
         return
     print ("connected")
 
-    socketHandler = SocketHandler()
-    socketHandler.setDaemon(True)
-    socketHandler.start()
+    #socketHandler = SocketHandler()
+    #socketHandler.setDaemon(True)
+    #socketHandler.start()
 
 
 def setupCanvas():
@@ -75,7 +75,7 @@ def motion(event):
     canvas.coords(line, (*center, x, y))
     dx = x - center[0]
     dy = y - center[1]
-    angle = degrees(atan2(dy, dx)) + 90
+    angle = atan2(dy, dx) + pi / 2
     lenght = min(hypot(dx, dy) / scl, 1)
     if(lenght < 0.05):
         lenght = 0
@@ -83,7 +83,7 @@ def motion(event):
     #Send Data over TCP
     global lastSend
     if (time.time() - lastSend) > (1/SENDRATE):
-        sendData(b'e', struct.pack('2f', angle, lenght))
+        sendData(b's', struct.pack('2f', angle, lenght))
         print ("%s, %s" % (angle, lenght))
         lastSend = time.time()
 

@@ -6,6 +6,8 @@ import android.util.Log
 import android.view.*
 import android.widget.RelativeLayout
 import kotlinx.android.synthetic.main.drive_layout.*
+import org.jetbrains.anko.centerInParent
+import org.jetbrains.anko.db.FloatParser
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import kotlin.math.atan2
@@ -14,14 +16,14 @@ import kotlin.math.roundToInt
 class DriveFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
+
+
         if (inflater != null) {
-            return inflater.inflate(R.layout.drive_layout, container, false)
+            var view = inflater.inflate(R.layout.drive_layout, container, false)
+            return view
         }
         return super.onCreateView(inflater, container, savedInstanceState)
     }
-
-    var deltaX = 0
-    var deltaY = 0
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -30,25 +32,33 @@ class DriveFragment : Fragment() {
 
             //val X = motionEvent.rawX.roundToInt()
             //val Y = motionEvent.rawY.roundToInt()
-            val X = motionEvent.x.roundToInt()
-            val Y = motionEvent.y.roundToInt()
 
-            motionEvent.action
+            var x = motionEvent.x.roundToInt()
+            var y = motionEvent.y.roundToInt()
+            var _x = 0f
+            var _y = 0f
+
+            _x = Math.min(Math.max((x.toFloat() / view2.width - 0.5f) * 2, -1f), 1f)
+
+            if (motionEvent.action == MotionEvent.ACTION_UP){
+                //x = view2.width / 2
+                y = view2.height / 2
+            } else {
+                 _y = Math.min(Math.max((y.toFloat() / view2.height - 0.5f) * -2, -1f), 1f)
+            }
 
             var layoutParams = image_thingy.layoutParams as RelativeLayout.LayoutParams
-            layoutParams.leftMargin = X
-            layoutParams.topMargin = Y
+            layoutParams.leftMargin = x - image_thingy.width / 2
+            layoutParams.topMargin = y - image_thingy.height / 2
             layoutParams.rightMargin = -250
             layoutParams.bottomMargin = -250
+            layoutParams.removeRule(RelativeLayout.CENTER_IN_PARENT)
             image_thingy.layoutParams = layoutParams
 
-            var _x : Float = X.toFloat() / view2.width - 0.5f
-            var _y : Float = -(Y.toFloat() / view2.height - 0.5f)
+            var angle : Float = _x * Math.PI.toFloat() / 2
+            var speed : Float = _y
 
-            var angle : Float = atan2(_x, _y)
-            var speed : Float = _y * 2
-
-            Log.d("Drive Fragment", "moved to X: $X; Y:$Y; _X:$_x; _Y:$_y")
+            Log.d("Drive Fragment", "moved to X: $x; Y:$y; _X:$_x; _Y:$_y")
             Log.d("Drive Fragment", "angle: $angle; speed: $speed")
 
             var byteBuffer = ByteBuffer.allocate(2 * 4)
