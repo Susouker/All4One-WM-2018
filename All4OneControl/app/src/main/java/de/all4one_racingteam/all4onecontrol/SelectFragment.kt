@@ -21,7 +21,12 @@ class SelectFragment : Fragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        button.setOnClickListener { _: View ->
+        button1.setOnClickListener { _: View ->
+            var message: ByteArray = byteArrayOf('d'.toByte(), 'D'.toByte())
+            (activity.applicationContext as GlobalState).sendTcpMessage(message)
+        }
+
+        button2.setOnClickListener { _: View ->
             var message: ByteArray = byteArrayOf('d'.toByte(), 'D'.toByte())
             (activity.applicationContext as GlobalState).sendTcpMessage(message)
         }

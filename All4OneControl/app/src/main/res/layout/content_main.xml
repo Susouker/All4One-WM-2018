@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:scaleType="centerCrop"
-        android:tint="#303030"
+        android:tint="#707070"
         android:tintMode="screen"
         app:srcCompat="@drawable/julian1" />
 
