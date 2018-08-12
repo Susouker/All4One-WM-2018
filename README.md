@@ -26,6 +26,7 @@ Das Auto (Server) sendet Großbuchstaben und die anderen Geräte (Clients) sende
 | s     | einfache Lenkung   | Die Werte der Fernbedienung          | 2xfloat - 8  byte | Lenkwinkel, Gas                 | rad/TBD |
 | c     | komplexe Lenkung   | Die Werte der Fernbedienung          | 3xfloat - 12 byte | Komplexe Lenkung (2), Gas       | rad/TBD |
 | t     | Optionen Toggle    | z.B. An- und Ausschalten des Buzzers | 2xbyte  - 2  byte | Identifier, Wert                | -       |
+| v     | VGC Mode           |                                      | 1xbyte  - 1  byte | Wert                            | -       |
 
 #### Optionen
 

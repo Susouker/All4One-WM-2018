@@ -4,13 +4,15 @@ import i2cManager as I2C
 lastAngles = (-180, -180, -180)
 servoAdresses = (0x11, 0x12, 0x00)
 
-def setServoAngles(car, R):
+def setServoAngles(car, r):
     if car == 'WM2017':
-        oldCar(R)
+        oldCar(r)
+    if car == 'P':
+        prototyp(r)
 
-def oldCar(R):
+def oldCar(r):
     global lastAngles
-    
+
     steeringFront = R[0][0] + 90
     steeringBack = R[0][2] + 90
     motor = R[1][0] * 90 + 90
@@ -22,3 +24,6 @@ def oldCar(R):
             I2C.setServo(servoAdresses[i], angles[i])
 
     lastAngles = angles
+
+def prototyp(r):
+    

@@ -52,10 +52,16 @@ def cbOptions(data):
 
     return data[2:]
 
+def cbVGCModeSelect(data):
+    value = data[0]
+    cbFunctions[1](value)
+    return data[1:]
+
 handlerFunctions = {
     b's': cbSimpleSteering,
     b'c': cbComplexSteering,
     b't': cbOptions,
     b'R': cbRotation,
     b'e': cbExtraSimpleSteering,
+    b'v': cbVGCModeSelect,
 }

@@ -90,7 +90,7 @@ def setInput(input, steeringMode):
         rChanged = 1
 
     if 'USE_GPIO' in PROPERTIES:
-        SA.setServoAngles('WM2017', r)
+        SA.setServoAngles('P', r)
 
     #Send Data over TCP
     global lastSend, startTime
@@ -98,6 +98,9 @@ def setInput(input, steeringMode):
         server.sendData(b'A' ,struct.pack('4f', *r[0]))
         server.sendData(b'T' ,struct.pack('4f', *r[1]))
         lastSend += 1/SENDRATE
+
+def setVGCMode(mode):
+    VGC.setMode(mode)
 
 
 #--------------------SETUP--------------------
@@ -109,7 +112,7 @@ def setup():
 
     if LOGGING:
         logger.setupFile(config)
-    server.setup(config, [setInput])
+    server.setup(config, [setInput, setVGCMode])
     relativeMotion.setup(config)
     VGC.setup(config)
     if 'USE_GPIO' in PROPERTIES:

@@ -3,10 +3,7 @@ package de.all4one_racingteam.all4onecontrol
 import android.app.Fragment
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.RelativeLayout
 import kotlinx.android.synthetic.main.drive_layout.*
 import java.nio.ByteBuffer
@@ -35,6 +32,8 @@ class DriveFragment : Fragment() {
             //val Y = motionEvent.rawY.roundToInt()
             val X = motionEvent.x.roundToInt()
             val Y = motionEvent.y.roundToInt()
+
+            motionEvent.action
 
             var layoutParams = image_thingy.layoutParams as RelativeLayout.LayoutParams
             layoutParams.leftMargin = X
