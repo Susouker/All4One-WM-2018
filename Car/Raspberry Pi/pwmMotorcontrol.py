@@ -3,7 +3,7 @@ import time               # Import time library
 
 def setup(config):
     GPIO.setmode(GPIO.BCM)  # Set Pi to use pin number when referencing GPIO pins.
-    global multiplier
+    global multiplier, pwm
     multiplier = int(float(config.get('voltages', 'motor')) / float(config.get('voltages','battery')) * 100)
     pwm = []
 
@@ -18,6 +18,7 @@ def setup(config):
 
 # main loop of program
 def setMotorPower(value):
+    global pwm
     if value < 0:
         pwm1 = pwm[0]
         pwm2 = pwm[1]
