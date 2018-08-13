@@ -23,14 +23,14 @@ def prototyp(r):
 
         if last[0][i] - r[0][i] > angleThreshold:       # Lenkwinkel
             I2C.setServo(i, r[0][i])                    # TODO Funktion anpassen, dass der Servotreiber aufgerufen wird
+            last[0][i] = r[0][i]
 
         if last[1][i] - r[1][i] > powerThreshold:       # Motorleisung
             PWM.setMotorPower(i, r[1][i])
+            last[1][i] = r[1][i]
 
         # TODO Magnete                                  # VGC Magnet
             # PWM.setMotorPower(i + 4, Magnet Power)
-
-    last = r
 
 
 def atexit():
