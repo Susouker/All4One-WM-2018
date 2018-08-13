@@ -1,8 +1,10 @@
 INFO = ("[INFO]", True)
 ERROR = ("[ERROR]", True)
 CB = ("[CALLBACK]", True)
+VGC = ("[VGC]", True)
 SERVER = ("[SERVER]", True)
 SERVERMSG = ("[SERVER]", True)
+ROUTINE = ("[ROUTINE]", True)
 
 lastError = ""
 

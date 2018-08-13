@@ -27,12 +27,16 @@ class ConnHandler(Thread):
         while 1:
             try:
                 msg = self.conn.recv(1024)
-                #CL.log(CL.SERVERMSG, "(%s) Reveived %s" % (self.addr[0], r.decode()))
-                CL.log(CL.SERVERMSG, "Received: %s" % (msg))
-                packetParser.parse(msg)
+                if len(msg) > 0:
+                    #CL.log(CL.SERVERMSG, "(%s) Reveived %s" % (self.addr[0], r.decode()))
+                    CL.log(CL.SERVERMSG, "Received: %s" % (msg))
+                    packetParser.parse(msg)
 
             except ConnectionResetError:
                 CL.log(CL.ERROR, "Connection Reset")
+                break
+            except ConnectionAbortedError:
+                CL.log(CL.ERROR, "Connection Aborted")
                 break
 
         self.conn.close()

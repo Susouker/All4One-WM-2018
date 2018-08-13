@@ -6,6 +6,10 @@
     <string name="nav_header_subtitle">4x4 in Schools</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
-    <string name="action_connect">Connect</string>
+    <string name="action_connect">Verbinden</string>
     <string name="action_disconnect">Disconnect</string>
+    <string name="nav_drive_name">Drive</string>
+    <string name="nav_vgc_select_name">VGC Mode</string>
+    <string name="nav_routines_select_name">Demos</string>
+    <string name="nav_options_name">Optionen</string>
 </resources>

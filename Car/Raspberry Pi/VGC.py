@@ -1,4 +1,5 @@
 from math import *
+import consoleLog as CL
 
 mode = 0
 
@@ -14,13 +15,14 @@ def setup(config):
 
 
 def setMode(m):
+    CL.log(CL.VGC, "Mode set to %s" % m)
     mode = m
 
 
 def calcVGC(rotation, current):
-    if mode == 0:
+    if mode == b'A':
         calcVGCSimple(rotation, current)
-    elif mode == 1:
+    elif mode == b'F':
         calcVGCFlat()
 
 def calcVGCFlat():

@@ -53,7 +53,7 @@ def cbOptions(data):
 
 
 def cbVGCModeSelect(data):
-    value = data[0]
+    value = data[0:1]
     cbFunctions[1]('VGC Mode', value)
     return data[1:]
 

@@ -75,6 +75,8 @@ def loop():
         IS_ACTIVE = False
         return
 
+def getR():
+    return r
 
 def setInput(input, steeringMode):
     global r, rChanged
@@ -106,6 +108,7 @@ def setProperty(property, value):
         VGC.setMode(value)
     elif property == 'Light':
         global light
+        print("Light set to %s" % value)
         light = value
     else:
         CL.log(CL.ERROR, "Property name not found: %s" % property)
@@ -120,7 +123,7 @@ def setup():
 
     if LOGGING:
         logger.setupFile(config)
-    server.setup(config, [setInput, setProperty])
+    server.setup(config, [setInput, setProperty, getR])
     relativeMotion.setup(config)
     VGC.setup(config)
     if 'USE_GPIO' in PROPERTIES:

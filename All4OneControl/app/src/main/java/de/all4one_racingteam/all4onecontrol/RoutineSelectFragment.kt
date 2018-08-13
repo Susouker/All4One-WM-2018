@@ -5,13 +5,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import kotlinx.android.synthetic.main.select_layout.*
+import android.widget.Toast
+import kotlinx.android.synthetic.main.vgc_select_layout.*
 
-class SelectFragment : Fragment() {
+class RoutineSelectFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
         if (inflater != null) {
-            return inflater.inflate(R.layout.select_layout, container, false)
+            return inflater.inflate(R.layout.routine_select_layout, container, false)
         }
 
 
@@ -21,13 +22,9 @@ class SelectFragment : Fragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        button1.setOnClickListener { _: View ->
-            var message: ByteArray = byteArrayOf('d'.toByte(), 'D'.toByte())
-            (activity.applicationContext as GlobalState).sendTcpMessage(message)
-        }
-
-        button2.setOnClickListener { _: View ->
-            var message: ByteArray = byteArrayOf('d'.toByte(), 'D'.toByte())
+        button1.setOnClickListener { _ : View ->
+            Toast.makeText(activity.applicationContext, "Starting Routine Steering Demo", Toast.LENGTH_LONG).show()
+            val message: ByteArray = byteArrayOf('d'.toByte(), 'D'.toByte())
             (activity.applicationContext as GlobalState).sendTcpMessage(message)
         }
     }

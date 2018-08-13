@@ -7,9 +7,10 @@ import java.net.InetSocketAddress
 import java.net.Socket
 import java.net.SocketException
 
-class TcpClient (listener: OnMessageReceived) {
+class TcpClient (messageReceivedListener: OnMessageReceived, socketStatusChangedListener: OnSocketStatusChanged) {
     private var mServerMessage: String? = null
     private var mMessageListener: OnMessageReceived? = null
+    private var mSocketStatusListener: OnSocketStatusChanged? = null
     private var mRun = false
     private var mRunning = false
     private var mConnecting = false
@@ -18,10 +19,9 @@ class TcpClient (listener: OnMessageReceived) {
     private var mServerAddress : InetSocketAddress? = null
     private var mToBeSendWhenConnected : ByteArray? = null
 
-    var socketConnectedListener : OnSocketConnected? = null
-
     init {
-        mMessageListener = listener
+        mMessageListener = messageReceivedListener
+        mSocketStatusListener = socketStatusChangedListener
     }
 
     fun sendMessage(message: ByteArray) {
@@ -52,6 +52,8 @@ class TcpClient (listener: OnMessageReceived) {
         mRun = false
         mRunning = false
         mConnecting = false
+        if(mSocketStatusListener != null)
+            mSocketStatusListener!!.socketDisconnected()
         Log.d("TCP Client", "S: Stopping...")
 
         if (mBufferOut != null) {
@@ -80,7 +82,10 @@ class TcpClient (listener: OnMessageReceived) {
             val socket = Socket()
             try{
                 mConnecting = true
+                if(mSocketStatusListener != null)
+                    mSocketStatusListener!!.socketConnecting()
                 socket.connect(mServerAddress, 5000)
+
                 onSocketConnected()
 
                 mBufferOut = socket.getOutputStream()
@@ -133,8 +138,8 @@ class TcpClient (listener: OnMessageReceived) {
         Log.d("TCP Client", "C: Connected")
         mRunning = true
         mConnecting = false
-        if(socketConnectedListener != null)
-            socketConnectedListener!!.socketConnected()
+        if(mSocketStatusListener != null)
+            mSocketStatusListener!!.socketConnected()
     }
 
     fun isActive(): Boolean {
@@ -145,8 +150,10 @@ class TcpClient (listener: OnMessageReceived) {
         fun messageReceived(message: String)
     }
 
-    interface OnSocketConnected {
+    interface OnSocketStatusChanged {
         fun socketConnected()
+        fun socketDisconnected()
+        fun socketConnecting()
     }
 
 }

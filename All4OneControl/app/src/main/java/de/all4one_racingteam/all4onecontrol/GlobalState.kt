@@ -8,14 +8,14 @@ class GlobalState : Application(){
 
     private var mTcpClient: TcpClient? = null
 
-    fun connectTcpClient(){
+    fun connectTcpClient(socketStatusListener : TcpClient.OnSocketStatusChanged){
         Log.d("Global States", "trying to connect")
         doAsync {
             mTcpClient = TcpClient(object : TcpClient.OnMessageReceived {
                 override fun messageReceived(message: String) {
                     Log.d("TCP Client", "Response: $message")
                 }
-            })
+            }, socketStatusListener)
             mTcpClient!!.run("192.168.178.40", 14044)
         }
     }

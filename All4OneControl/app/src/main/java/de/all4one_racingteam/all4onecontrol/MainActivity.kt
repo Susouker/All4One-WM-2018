@@ -6,8 +6,10 @@ import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
@@ -64,7 +66,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 true
             }
             R.id.action_connect -> {
-                (applicationContext as GlobalState).connectTcpClient()
+                (applicationContext as GlobalState).connectTcpClient( object : TcpClient.OnSocketStatusChanged {
+                    override fun socketConnected() {
+                        Toast.makeText(applicationContext, "Connected", Toast.LENGTH_SHORT)
+                    }
+                    override fun socketConnecting() {
+                        Toast.makeText(applicationContext, "Connecting", Toast.LENGTH_SHORT)
+                    }
+                    override fun socketDisconnected() {
+                        Toast.makeText(applicationContext, "Disconnected", Toast.LENGTH_SHORT)
+                    }
+                })
                 true
             }
             R.id.action_disconnect -> {
@@ -82,8 +94,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_drive_layout -> {
                 fragmentManager.beginTransaction().replace(R.id.content_frame, DriveFragment()).commit()
             }
-            R.id.nav_select_layout -> {
-                fragmentManager.beginTransaction().replace(R.id.content_frame, SelectFragment()).commit()
+            R.id.nav_vgc_select_layout -> {
+                fragmentManager.beginTransaction().replace(R.id.content_frame, VGCSelectFragment()).commit()
+            }
+            R.id.nav_routine_select_layout -> {
+                fragmentManager.beginTransaction().replace(R.id.content_frame, RoutineSelectFragment()).commit()
             }
             R.id.nav_options_layout -> {
                 fragmentManager.beginTransaction().replace(R.id.content_frame, OptionsFragment()).commit()
