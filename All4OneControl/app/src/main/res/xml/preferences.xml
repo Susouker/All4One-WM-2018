@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+        android:defaultValue="192.168.178.40"
+        android:key="hostname"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:summary="The hostname of the Car"
+        android:title="Hostname" />
+    <EditTextPreference
+        android:defaultValue="14044"
+        android:key="port"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:summary="The port of the socket connection"
+        android:title="Port" />
+</PreferenceScreen>

@@ -112,8 +112,20 @@ class TcpClient (messageReceivedListener: OnMessageReceived, socketStatusChanged
                 Log.d("TCP Client", "Timeout when trying to connect")
                 stopClient()
             } catch (e: java.net.SocketException){
-                Log.d("TCP Client", "Connection Reset")
-                resetConnection()
+                when {
+                    e.message == "Connection reset" -> {
+                        Log.d("TCP Client", "Connection reset", e)
+                        resetConnection()
+                    }
+                    e.message == "Socket closed" -> {
+                        socket.close()
+                    }
+                    else -> {
+                        Log.e("TCP Client", "Error", e)
+                        socket.close()
+                        stopClient()
+                    }
+                }
             } catch (e: Exception) {
                 Log.e("TCP Client", "S: Error", e)
             } finally {

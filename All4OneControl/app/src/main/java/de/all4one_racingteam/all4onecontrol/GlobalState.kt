@@ -1,6 +1,8 @@
 package de.all4one_racingteam.all4onecontrol
 
 import android.app.Application
+import android.content.Context
+import android.preference.PreferenceManager
 import android.util.Log
 import org.jetbrains.anko.doAsync
 
@@ -16,7 +18,11 @@ class GlobalState : Application(){
                     Log.d("TCP Client", "Response: $message")
                 }
             }, socketStatusListener)
-            mTcpClient!!.run("192.168.178.40", 14044)
+
+            val sharedPref = android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(applicationContext)
+            val hostname = sharedPref.getString(SettingsActivity.hostnameKey, "localhost")
+            val port =  sharedPref.getString(SettingsActivity.portKey, "14044").toInt()
+            mTcpClient!!.run(hostname, port)
         }
     }
 

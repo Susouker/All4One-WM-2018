@@ -1,11 +1,13 @@
 package de.all4one_racingteam.all4onecontrol
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.preference.PreferenceManager
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -33,6 +35,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         nav_view.setCheckedItem(R.id.nav_drive_layout)
         fragmentManager.beginTransaction().replace(R.id.content_frame, DriveFragment()).commit()
+
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
     }
 
     override fun onBackPressed() {
@@ -63,18 +67,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_settings -> {
+                //supportFragmentManager.beginTransaction().replace(R.id.content_frame, SettingsFragment()).commit
+                startActivity(Intent(this, SettingsActivity::class.java))
                 true
             }
             R.id.action_connect -> {
                 (applicationContext as GlobalState).connectTcpClient( object : TcpClient.OnSocketStatusChanged {
                     override fun socketConnected() {
-                        Toast.makeText(applicationContext, "Connected", Toast.LENGTH_SHORT)
+                        //Toast.makeText(applicationContext, "Connected", Toast.LENGTH_SHORT)
                     }
                     override fun socketConnecting() {
-                        Toast.makeText(applicationContext, "Connecting", Toast.LENGTH_SHORT)
+                        //Toast.makeText(applicationContext, "Connecting", Toast.LENGTH_SHORT)
                     }
                     override fun socketDisconnected() {
-                        Toast.makeText(applicationContext, "Disconnected", Toast.LENGTH_SHORT)
+                        //Toast.makeText(applicationContext, "Disconnected", Toast.LENGTH_SHORT)
                     }
                 })
                 true
