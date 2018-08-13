@@ -1,12 +1,13 @@
 import i2cManager as I2C
 import pwmMotorcontrol as PWM
 
+last = ((10, 10, 10, 10), (10, 10, 10, 10))
+angleThreshold = 0.02     # 0.02rad sind etwa 1.15°
+powerThreshold = 0.05
+
 
 def setup(config):
     PWM.setup(config)
-#    steeringFront, steeringBack, motor
-lastAngles = (-180, -180, -180)
-servoAdresses = (0x11, 0x12, 0x00)
 
 
 def setCarOutput(car, r):
@@ -16,6 +17,28 @@ def setCarOutput(car, r):
         prototyp(r)
 
 
+def prototyp(r):
+    global last
+    for i in range(4):                                  # Für jedes Rad
+
+        if last[0][i] - r[0][i] > angleThreshold:       # Lenkwinkel
+            I2C.setServo(i, r[0][i])                    # TODO Funktion anpassen, dass der Servotreiber aufgerufen wird
+
+        if last[1][i] - r[1][i] > powerThreshold:       # Motorleisung
+            PWM.setMotorPower(i, r[1][i])
+
+        # TODO Magnete                                  # VGC Magnet
+            # PWM.setMotorPower(i + 4, Magnet Power)
+
+    last = r
+
+
+def atexit():
+    PWM.atexit()
+
+
+#Alte Methode. Nicht benutzen
+servoAdresses = (0x11, 0x12, 0x00)
 def oldCar(r):
     global lastAngles
 
@@ -29,13 +52,4 @@ def oldCar(r):
         if abs(angles[i] - lastAngles[i]) > 2:
             I2C.setServo(servoAdresses[i], angles[i])
 
-    lastAngles = angles
-
-
-def prototyp(r):
-    for i in range(4):
-        PWM.setMotorPower(i, r[1][i])
-
-
-def atexit():
-    PWM.atexit
+            lastAngles = angles
