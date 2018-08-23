@@ -4,12 +4,15 @@ from math import *
 
 
 def setup(config):
-    global canvasWidth, canvasHeight, canvasScale, width, wheelbase
+    global canvasWidth, canvasHeight, canvasScale, width, wheelbase, wheelWidth, wheelDiameter, wheelOffset
     canvasWidth = int(config.get('display', 'width'))
     canvasHeight = int(config.get('display', 'height'))
     canvasScale = float(config.get('display', 'scale'))
     width = float(config.get('car', 'width'))
     wheelbase = float(config.get('car', 'wheelbase'))
+    wheelWidth = float(config.get('car', 'wheelWidth'))
+    wheelDiameter = float(config.get('car', 'wheelDiameter'))
+    wheelOffset = float(config.get('car', 'wheelOffset'))
 
     global root, angleText
     root = Tk()
@@ -47,4 +50,4 @@ def setupCanvas():
     canvas = Canvas(width=canvasWidth, height=canvasHeight)
     canvas.pack()
     canvas.configure(background=di.getHex(51))
-    di.setup(width, wheelbase, canvas, canvasWidth, canvasHeight, canvasScale)
+    di.setup(width, wheelbase, wheelWidth, wheelDiameter, wheelOffset, canvas, canvasWidth, canvasHeight, canvasScale)
