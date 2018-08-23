@@ -5,11 +5,15 @@
     <string name="nav_header_title">All4One</string>
     <string name="nav_header_subtitle">4x4 in Schools</string>
     <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Einstellungen</string>
-    <string name="action_connect">Verbinden</string>
-    <string name="action_disconnect">Disconnect</string>
     <string name="nav_drive_name">Drive</string>
+    <string name="nav_towbar_name">Tow-Bar</string>
     <string name="nav_vgc_select_name">VGC Mode</string>
     <string name="nav_routines_select_name">Demos</string>
     <string name="nav_options_name">Optionen</string>
+    <string name="action_settings">Einstellungen</string>
+    <string name="action_connect">Verbinden</string>
+    <string name="action_disconnect">Verbindung trennen</string>
+    <string name="toast_connected">Verbunden!</string>
+    <string name="toast_connecting">Verbinden...</string>
+    <string name="toast_disconnected">Verbindung abgebrochen</string>
 </resources>

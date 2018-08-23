@@ -8,14 +8,14 @@
     tools:context=".MainActivity"
     tools:showIn="@layout/app_bar_main">
 
-    <ImageView
+    <!--<ImageView
         android:id="@+id/bgImage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:scaleType="centerCrop"
         android:tint="#c0c0c0"
         android:tintMode="screen"
-        app:srcCompat="@drawable/bg" />
+        app:srcCompat="@drawable/bg" />-->
 
     <FrameLayout
         android:id="@+id/content_frame"

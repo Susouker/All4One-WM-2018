@@ -8,7 +8,6 @@ import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.preference.PreferenceManager
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -74,13 +73,22 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.action_connect -> {
                 (applicationContext as GlobalState).connectTcpClient( object : TcpClient.OnSocketStatusChanged {
                     override fun socketConnected() {
-                        //Toast.makeText(applicationContext, "Connected", Toast.LENGTH_SHORT)
+                        runOnUiThread {
+                            toolbar.menu.getItem(0).icon = getDrawable(R.drawable.ic_connected)
+                            Toast.makeText(applicationContext, getString(R.string.toast_connected), Toast.LENGTH_SHORT).show()
+                        }
                     }
                     override fun socketConnecting() {
-                        //Toast.makeText(applicationContext, "Connecting", Toast.LENGTH_SHORT)
+                        runOnUiThread {
+                            toolbar.menu.getItem(0).icon = getDrawable(R.drawable.ic_connecting)
+                            Toast.makeText(applicationContext, getString(R.string.toast_connecting), Toast.LENGTH_SHORT).show()
+                        }
                     }
-                    override fun socketDisconnected() {
-                        //Toast.makeText(applicationContext, "Disconnected", Toast.LENGTH_SHORT)
+                    override fun socketDisconnected(){
+                        runOnUiThread {
+                            toolbar.menu.getItem(0).icon = getDrawable(R.drawable.ic_notconnected)
+                            Toast.makeText(applicationContext, getString(R.string.toast_disconnected), Toast.LENGTH_SHORT).show()
+                        }
                     }
                 })
                 true
@@ -99,6 +107,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         when (item.itemId) {
             R.id.nav_drive_layout -> {
                 fragmentManager.beginTransaction().replace(R.id.content_frame, DriveFragment()).commit()
+            }
+            R.id.nav_towbar_layout -> {
+                fragmentManager.beginTransaction().replace(R.id.content_frame, TowBarFragment()).commit()
             }
             R.id.nav_vgc_select_layout -> {
                 fragmentManager.beginTransaction().replace(R.id.content_frame, VGCSelectFragment()).commit()

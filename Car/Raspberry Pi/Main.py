@@ -41,7 +41,7 @@ if __name__ == '__main__':
         import carOutputManager
     if 'USE_GPIO' in PROPERTIES:
         import gpioManager as GPIO
-    if 'LOGGING' in PROPERTIES:
+    if LOGGING:
         import logger
 
 
@@ -68,7 +68,7 @@ def loop():
             visualizer.update()
 
         if LOGGING and (time.time() - startTime - lastLog) > (1/LOGRATE):
-            LO.log(currentTime, light, input, r)
+            logger.log(currentTime, light, input, r)
             lastLog += 1/LOGRATE
 
     except KeyboardInterrupt:

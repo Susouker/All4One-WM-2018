@@ -12,6 +12,10 @@
             android:icon="@drawable/ic_car"
             android:title="@string/nav_drive_name" />
         <item
+            android:id="@+id/nav_towbar_layout"
+            android:icon="@drawable/ic_towbar"
+            android:title="@string/nav_towbar_name" />
+        <item
             android:id="@+id/nav_vgc_select_layout"
             android:icon="@drawable/ic_select"
             android:title="@string/nav_vgc_select_name" />

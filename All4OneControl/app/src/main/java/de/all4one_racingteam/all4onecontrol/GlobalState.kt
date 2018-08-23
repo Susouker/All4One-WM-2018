@@ -20,8 +20,8 @@ class GlobalState : Application(){
             }, socketStatusListener)
 
             val sharedPref = android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(applicationContext)
-            val hostname = sharedPref.getString(SettingsActivity.hostnameKey, "localhost")
-            val port =  sharedPref.getString(SettingsActivity.portKey, "14044").toInt()
+            val hostname = sharedPref.getString(SettingsActivity.hostnameKey, "localhost").trim()
+            val port =  sharedPref.getString(SettingsActivity.portKey, "14044").trim().toInt()
             mTcpClient!!.run(hostname, port)
         }
     }

@@ -13,25 +13,23 @@ import java.nio.ByteOrder
 import kotlin.math.atan2
 import kotlin.math.roundToInt
 
-class DriveFragment : ControlFragment() {
-
+class TowBarFragment : ControlFragment() {
     override fun getTitle(): String {
-        return getString(R.string.nav_drive_name)
+        return getString(R.string.nav_towbar_name)
     }
 
     override fun sendValues(relativeX: Float, relativeY: Float) {
 
-        var angle : Float = relativeX * Math.PI.toFloat() / 2
-        var speed : Float = relativeY
+        var position : Float = relativeX / 2 + 0.5f
 
-        Log.d("Drive Fragment", "angle: $angle; speed: $speed")
 
-        var byteBuffer = ByteBuffer.allocate(2 * 4)
+        Log.d("Tow Bar Fragment", "position $position")
+
+        var byteBuffer = ByteBuffer.allocate(1 * 4)
         byteBuffer.order(ByteOrder.LITTLE_ENDIAN)
-        byteBuffer.putFloat(angle)
-        byteBuffer.putFloat(speed)
+        byteBuffer.putFloat(position)
 
-        var message: ByteArray = byteArrayOf('s'.toByte(), *byteBuffer.array())
+        var message: ByteArray = byteArrayOf('b'.toByte(), *byteBuffer.array())
 
         (activity.applicationContext as GlobalState).sendTcpMessage(message)
 

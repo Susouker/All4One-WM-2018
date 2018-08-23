@@ -33,6 +33,11 @@ def cbComplexSteering(data):
     cbFunctions[0]((r[0], r[1], r[2]), 1)
     return data[4*3:]
 
+def cbTowBar(data):
+    r = struct.unpack('f', data[0:4*1])
+    # TODO implement
+    return data[4*1:]
+
 
 def cbRotation(data):
     r = struct.unpack('ff', data[0:4*2])
@@ -67,6 +72,7 @@ def cbRoutines(data):
 handlerFunctions = {
     b's': cbSimpleSteering,
     b'c': cbComplexSteering,
+    b'b': cbTowBar,
     b't': cbOptions,
     b'R': cbRotation,
     b'e': cbExtraSimpleSteering,

@@ -6,6 +6,7 @@ import java.io.*
 import java.net.InetSocketAddress
 import java.net.Socket
 import java.net.SocketException
+import java.net.UnknownHostException
 
 class TcpClient (messageReceivedListener: OnMessageReceived, socketStatusChangedListener: OnSocketStatusChanged) {
     private var mServerMessage: String? = null
@@ -118,16 +119,19 @@ class TcpClient (messageReceivedListener: OnMessageReceived, socketStatusChanged
                         resetConnection()
                     }
                     e.message == "Socket closed" -> {
-                        socket.close()
+                        stopClient()
                     }
                     else -> {
                         Log.e("TCP Client", "Error", e)
-                        socket.close()
                         stopClient()
                     }
                 }
-            } catch (e: Exception) {
+            } catch (e: UnknownHostException) {
+                Log.e("TCP Client", "Unknown host", e)
+                stopClient()
+            }  catch (e: Exception) {
                 Log.e("TCP Client", "S: Error", e)
+                stopClient()
             } finally {
                 socket.close()
             }
