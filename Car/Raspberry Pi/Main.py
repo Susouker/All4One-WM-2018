@@ -54,7 +54,7 @@ def loop():
         global input, light
         if 'VISUALIZER_AS_INPUT' in PROPERTIES:
             try:
-                setInput(visualizer.getInput())
+                setInput(*visualizer.getInput())
             except:
                 IS_ACTIVE = False
                 return

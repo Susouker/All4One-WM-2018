@@ -24,7 +24,7 @@ Das Auto (Server) sendet Großbuchstaben und die anderen Geräte (Clients) sende
 | R     | Rotation           | Die Rotation des Autos               | 2xfloat - 8  byte | Rechts-Links, Vorne-Hinten      | rad     |
 | V     | VGC                | Die Höhen der vier Zylinder          | 4xfloat - 16 byte | FR, FL, BR, BL                  | mm      |
 | s     | einfache Lenkung   | Die Werte der Fernbedienung          | 2xfloat - 8  byte | Lenkwinkel, Gas                 | rad/TBD |
-| c     | komplexe Lenkung   | Die Werte der Fernbedienung          | 3xfloat - 12 byte | Komplexe Lenkung (2), Gas       | rad/TBD |
+| c     | komplexe Lenkung   | Die Werte der Fernbedienung          | 3xfloat - 12 byte | Komplexe Lenkung (2), Gas       | rad/mm/TBD |
 | b     | Tow-Bar            | Die Position der Tow-Bar             | 1xfloat - 4 byte  | Position                        | 0-1     |
 | t     | Optionen Toggle    | z.B. An- und Ausschalten des Buzzers | 2xbyte  - 2  byte | Identifier, Wert                | -       |
 | v     | VGC Mode           |                                      | 1xbyte  - 1  byte | Wert                            | -       |

@@ -41,7 +41,7 @@ def getInput():
     global angleText
     angleText = "%d"%(degrees(angle))
 
-    return (angle, l, 1)
+    return ((angle, l, 1), 1)
 
 
 def setupCanvas():

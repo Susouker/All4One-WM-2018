@@ -45,10 +45,10 @@ def calcC(tcAngle, tcDist, pwr):
     pwrBL = -1
 
     if tcDist == inf:
-        angleFR = tcAngle+90
-        angleFL = tcAngle+90
-        angleBR = tcAngle+90
-        angleBL = tcAngle+90
+        angleFR = tcAngle + pi/2
+        angleFL = tcAngle + pi/2
+        angleBR = tcAngle + pi/2
+        angleBL = tcAngle + pi/2
 
     else:
         a = tcAngle
@@ -72,34 +72,34 @@ def calcC(tcAngle, tcDist, pwr):
         pwrBR = -rBR / r
         pwrBL = rBL / r
 
-        angleFR = -90 + (atan2(w/2 - x, b-y))
-        angleFL = 90 + (atan2(-w/2 - x, b-y))
-        angleBR = -90 + (atan2(w/2 - x, -b-y))
-        angleBL = 90 + (atan2(-w/2 - x, -b-y))
+        angleFR = -pi/2 + (atan2(w/2 - x, b-y))
+        angleFL = pi/2 + (atan2(-w/2 - x, b-y))
+        angleBR = -pi/2 + (atan2(w/2 - x, -b-y))
+        angleBL = pi/2 + (atan2(-w/2 - x, -b-y))
 
-    if (angleFR > 90):
-       angleFR = angleFR - 180
+    if (angleFR > pi/2):
+       angleFR = angleFR - pi
        pwrFR *= -1
-    if (angleFL > 90):
-        angleFL = angleFL - 180
+    if (angleFL > pi/2):
+        angleFL = angleFL - pi
         pwrFL *= -1
-    if (angleBR > 90):
-        angleBR = angleBR - 180
+    if (angleBR > pi/2):
+        angleBR = angleBR - pi
         pwrBR *= -1
-    if (angleBL > 90):
-        angleBL = angleBL - 180
+    if (angleBL > pi/2):
+        angleBL = angleBL - pi
         pwrBL *= -1
-    if (angleFR < -90):
-        angleFR = 180 + angleFR
+    if (angleFR < -pi/2):
+        angleFR = pi + angleFR
         pwrFR *= -1
-    if (angleFL < -90):
-        angleFL = 180 + angleFL
+    if (angleFL < -pi/2):
+        angleFL = pi + angleFL
         pwrFL *= -1
-    if (angleBR < -90):
-        angleBR = 180 + angleBR
+    if (angleBR < -pi/2):
+        angleBR = pi + angleBR
         pwrBR *= -1
-    if (angleBL < -90):
-        angleBL = 180 + angleBL
+    if (angleBL < -pi/2):
+        angleBL = pi + angleBL
         pwrBL *= -1
 
 
