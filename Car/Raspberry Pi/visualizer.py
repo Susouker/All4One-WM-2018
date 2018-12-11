@@ -20,8 +20,8 @@ def setup(config):
     angleText = "no vi input"
 
 
-def setInput(r, light):
-    msg = "angle: %s°; light is %s" % (angleText, "on" if light else "off")
+def setInput(r):
+    msg = "angle: %s°" % angleText#"; light is %s" % (angleText, "on" if light else "off")
     di.update(r, msg)
 
 def update():

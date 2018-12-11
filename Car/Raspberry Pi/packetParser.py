@@ -49,17 +49,13 @@ def cbRotation(data):
 def cbOptions(data):
     identifier = data[0:1]
     value = data[1]
-    if (identifier == b'L'):
-        cbFunctions[1]('Light', value)
-    if (identifier == b'B'):
-        d = 1
-
+    cbFunctions[1](identifier, value)
     return data[2:]
 
 
 def cbVGCModeSelect(data):
     value = data[0:1]
-    cbFunctions[1]('VGC Mode', value)
+    cbFunctions[3]('VGC Mode', value)
     return data[1:]
 
 

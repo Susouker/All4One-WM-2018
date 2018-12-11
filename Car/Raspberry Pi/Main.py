@@ -34,10 +34,10 @@ if __name__ == '__main__':
     import relativeMotion
     import VGC
     import server
+    import optionManager
     if 'USE_VISUALIZER' in PROPERTIES:
         import visualizer
     if 'USE_GPIO' in PROPERTIES:
-        import i2cManager as I2C
         import carOutputManager
     if 'USE_GPIO' in PROPERTIES:
         import gpioManager as GPIO
@@ -51,7 +51,6 @@ def loop():
         global startTime, lastSend, lastLog, IS_ACTIVE
 
         #Get input from Mouse Curosr if visualizer is used
-        global input, light
         if 'VISUALIZER_AS_INPUT' in PROPERTIES:
             try:
                 setInput(*visualizer.getInput())
@@ -64,11 +63,11 @@ def loop():
             global rChanged
             if rChanged:
                 rChanged = 0
-                visualizer.setInput(r, light)
+                visualizer.setInput(r)
             visualizer.update()
 
         if LOGGING and (time.time() - startTime - lastLog) > (1/LOGRATE):
-            logger.log(currentTime, light, input, r)
+            logger.log(currentTime, input, r)
             lastLog += 1/LOGRATE
 
     except KeyboardInterrupt:
@@ -95,23 +94,12 @@ def setInput(input, steeringMode):
     if 'USE_GPIO' in PROPERTIES:
         carOutputManager.setCarOutput('P', r)
 
-    #Send Data over TCP
+    #Send Data Back over TCP
     global lastSend, startTime
     if (time.time() - startTime - lastSend) > (1/SENDRATE):
         server.sendData(b'A' ,struct.pack('4f', *r[0]))
         server.sendData(b'T' ,struct.pack('4f', *r[1]))
         lastSend += 1/SENDRATE
-
-
-def setProperty(property, value):
-    if property == 'VGC Mode':
-        VGC.setMode(value)
-    elif property == 'Light':
-        global light
-        print("Light set to %s" % value)
-        light = value
-    else:
-        CL.log(CL.ERROR, "Property name not found: %s" % property)
 
 
 #--------------------SETUP--------------------
@@ -123,7 +111,7 @@ def setup():
 
     if LOGGING:
         logger.setupFile(config)
-    server.setup(config, [setInput, setProperty, getR])
+    server.setup(config, [setInput, optionManager.setProperty, getR, VGC.setMode])
     relativeMotion.setup(config)
     VGC.setup(config)
     if 'USE_GPIO' in PROPERTIES:
