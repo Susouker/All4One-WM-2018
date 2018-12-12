@@ -39,10 +39,9 @@ void loop() {
 
 void receiveEvent(int howMany) {
   lastUpdate = millis();
-  while (1 < Wire.available()) { // loop through all but the last
-    char c = Wire.read(); // receive byte as a character
-    Serial.print(c);         // print the character
+  Serial.println(howMany);
+  while (0 < Wire.available()) {
+    int c = Wire.read();
+    Serial.println(c);
   }
-  int x = Wire.read();    // receive byte as an integer
-  Serial.println(x);         // print the integer
 }

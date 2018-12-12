@@ -5,16 +5,16 @@ address = {
 }
 
 import consoleLog as CL
-import smbus
+import smbus2
 import time
-bus = smbus.SMBus(1)
+bus = smbus2.SMBus(1)
 
 
 def writeToSlave(identifier, value):
     slaveID = (identifier & 0b11000000) >> 6
     v = chr(int(value))
-    #try:
-    bus.write_byte_data(adress[slaveID], identifier, v)
-    #except:
-#        CL.log(CL.ERROR, "During sending Data " + str(identifier) + ", " + str(value))
-#        return
+    try:
+        bus.write_byte_data(address[slaveID], identifier, v)
+    except OSError:
+        CL.log(CL.ERROR, "During sending Data " + str(identifier) + ", " + str(value))
+        return

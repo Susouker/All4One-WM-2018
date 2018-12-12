@@ -1,4 +1,5 @@
 from gpiozero import LED
+lastPulse = 0
 
 def setup(config):
     status_pin = int(config.get('GPIO', 'status_LED_pin'))
@@ -17,6 +18,7 @@ def setMode(s):
         modeLED.off()
 
 def update(time):
+    global lastPulse
     if time - lastPulse > 0.5:
         statusLED.toggle()
         lastPulse = time
