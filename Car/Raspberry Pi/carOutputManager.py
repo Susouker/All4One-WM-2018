@@ -1,6 +1,6 @@
 import i2cManager as I2C
 
-last = ((10, 10, 10, 10), (10, 10, 10, 10))
+last = [[10, 10, 10, 10], [10, 10, 10, 10], [10, 10, 10, 10], 10]
 angleThreshold = 0.02     # 0.02rad sind etwa 1.15°
 threshold = 0.05
 
@@ -22,7 +22,7 @@ def prototyp(carOutput):
     global last
     for i in range(4):                                  # Für jedes Rad
         if last[0][i] - carOutput[0][i] > angleThreshold:       # Lenkwinkel
-            v = (carOutput[0][i] + 64) * 2                      # -64° - 64°
+            v = (carOutput[0][i] + 1) * 128                      # -1rad - 1rad
             I2C.writeToSlave(LENKUNG + i, v)
             last[0][i] = carOutput[0][i]
 

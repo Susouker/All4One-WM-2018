@@ -58,7 +58,7 @@ Nach einem Identifier Byte kommt ein Byte mit dem Wert. Wenn es eine Option vier
 
 | Identifier | Name          | Format                  |
 | :------- | :-------------- | :---------------------- |
-| 001000xx | Lenkung         | -64° - 64°              |
+| 001000xx | Lenkung         | -1rad - 1rad            |
 | 001100xx | Throttle        | Rückwärts - Vorwärts    |
 | 011000xx | VGC             | Räder unten - oben      |
 | 01110000 | TowBar Position | Rechts - Links          |
