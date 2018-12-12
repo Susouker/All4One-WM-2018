@@ -11,7 +11,10 @@ def parse(data):
     while len(data) > 0:
         packetID = data[:1]
         if packetID in handlerFunctions:
-            data = handlerFunctions[packetID](data[1:])
+            try:
+                data = handlerFunctions[packetID](data[1:])
+            except struct.error:
+                CL.log(CL.ERROR, "Invalid packet %s" % packetID)
         else:
             CL.log(CL.ERROR, "Invalid identifier %s" % packetID)
 

@@ -27,21 +27,23 @@ void setup() {
 void loop() {
 
   if (millis() > lastUpdate + TIMEOUT) {
-      for (size_t i = 0; i < 4; i++) {
-        steering[i].write(90);
-      }
-      for (size_t i = 0; i < 8; i++) {
-        digitalWrite(i + 4, LOW);
-      }
+    for (size_t i = 0; i < 4; i++) {
+      steering[i].write(90);
+    }
+    for (size_t i = 0; i < 8; i++) {
+      digitalWrite(i + 4, LOW);
+    }
   }
 
 }
 
 void receiveEvent(int howMany) {
   lastUpdate = millis();
-  Serial.println(howMany);
-  while (0 < Wire.available()) {
-    int c = Wire.read();
-    Serial.println(c);
+  if (howMany == 2) {
+    int ident = Wire.read();
+    int value = Wire.read() - 128;
+    if ((ident & 0b00111100) == 32) { // Lenkung
+      steering[ident & 0b00000011].write((value * 0.4476f) + 90);
+    }
   }
 }
