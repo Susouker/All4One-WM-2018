@@ -21,22 +21,22 @@ def setCarOutput(car, carOutput):
 def prototyp(carOutput):
     global last
     for i in range(4):                                  # Für jedes Rad
-        if last[0][i] - carOutput[0][i] > angleThreshold:       # Lenkwinkel
+        if abs(last[0][i] - carOutput[0][i]) > angleThreshold:       # Lenkwinkel
             v = (carOutput[0][i] + 1) * 128                      # -1rad - 1rad
             I2C.writeToSlave(LENKUNG + i, v)
             last[0][i] = carOutput[0][i]
 
-        if last[1][i] - carOutput[1][i] > threshold:            # Motorleisung
+        if abs(last[1][i] - carOutput[1][i]) > threshold:            # Motorleisung
             v = (carOutput[1][i] + 1) * 128
             I2C.writeToSlave(THROTTLE + i, v)
             last[1][i] = carOutput[1][i]
 
-        if last[2][i] - carOutput[2][i] > threshold:            # VGC
+        if abs(last[2][i] - carOutput[2][i]) > threshold:            # VGC
             v = (carOutput[2][i]) * 256
             I2C.writeToSlave(VGC + i, v)
             last[2][i] = carOutput[2][i]
 
-    if last[3] - carOutput[3] > threshold:                      # Tow Bar
+    if abs(last[3] - carOutput[3]) > threshold:                      # Tow Bar
         v = (carOutput[3] + 1) * 128
         I2C.writeToSlave(TOWBAR, v)
         last[3] = carOutput[3]
