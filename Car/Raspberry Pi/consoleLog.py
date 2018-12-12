@@ -3,7 +3,7 @@ ERROR = ("[ERROR]", True)
 CB = ("[CALLBACK]", True)
 VGC = ("[VGC]", True)
 SERVER = ("[SERVER]", True)
-SERVERMSG = ("[SERVER]", True)
+SERVERMSG = ("[SERVER]", False)
 ROUTINE = ("[ROUTINE]", True)
 
 lastError = ""

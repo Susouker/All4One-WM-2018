@@ -12,9 +12,10 @@ bus = smbus2.SMBus(1)
 
 def writeToSlave(identifier, value):
     slaveID = (identifier & 0b11000000) >> 6
-    v = chr(int(value))
+    v = int(value)
     try:
         bus.write_byte_data(address[slaveID], identifier, v)
+        CL.log(CL.INFO, "Send " + str(identifier) + ", " + str(value))
     except OSError:
         CL.log(CL.ERROR, "During sending Data " + str(identifier) + ", " + str(value))
         return
