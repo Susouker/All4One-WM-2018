@@ -2,12 +2,14 @@ from math import *
 
 
 def setup(config):
-    global b, w
+    global b, w, maxAngle
     w = float(config.get('car', 'width'))
     b = float(config.get('car', 'wheelbase')) / 2
+    maxAngle = float(config.get('car', 'maxSteeringAngle'))
 
 
 def calcS(angle, pwr):
+    angle = constrainAngle(angle)
     angleL = 0
     angleR = 0
     pwrL = 1
@@ -102,3 +104,10 @@ def calcC(tcAngle, tcDist, pwr):
 
 def power(pwr, pwrFR, pwrFL, pwrBR, pwrBL):
     return (pwrFR * pwr, pwrFL * pwr, pwrBR * pwr, pwrBL * pwr)
+
+def constrainAngle(value):
+    if value > maxAngle:
+        value = maxAngle
+    elif value < -maxAngle:
+        value = -maxAngle
+    return value
