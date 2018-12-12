@@ -3,23 +3,23 @@ from gpiozero import LED
 def setup(config):
     status_pin = int(config.get('GPIO', 'status_LED_pin'))
     mode_pin = int(config.get('GPIO', 'mode_LED_pin'))
-    
-    global statusLED, modeLED
-    statusLED = LED(status_pin)
-    modeLED = LED(mode_pin)
-    
 
-def setStatus(s):
-    if s!=0:
-        statusLED.on()
-    else:
-        statusLED.off()
-    
+    global statusLED, modeLED, lastPulse
+    statusLED = LED(status_pin)
+    statusLED.on()
+    modeLED = LED(mode_pin)
+
+
 def setMode(s):
     if s!=0:
         modeLED.on()
     else:
         modeLED.off()
+
+def update(time):
+    if time - lastPulse > 0.5:
+        statusLED.toggle()
+        lastPulse = time
 
 
 def atexit():

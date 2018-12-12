@@ -16,12 +16,6 @@ def parse(data):
             CL.log(CL.ERROR, "Invalid identifier %s" % packetID)
 
 
-def cbExtraSimpleSteering(data):
-    r = struct.unpack('ff', data[0:4*2])
-    cbFunctions[0]((r[0], 0, r[1]), -1)
-    return data[4*2:]
-
-
 def cbSimpleSteering(data):
     r = struct.unpack('ff', data[0:4*2])
     cbFunctions[0]((r[0], 0, r[1]), 0)

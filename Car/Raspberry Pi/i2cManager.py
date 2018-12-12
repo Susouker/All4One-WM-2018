@@ -1,35 +1,20 @@
-address_LS = 0x31
-address_SC = 0x36
+address = {
+0b00: 0x30, #Lenkservos, Radmotoren
+0b01: 0x31, #VGC, cbTowBar
+0b10: 0x32, #Bodyshell (Licht, Lichtsensor)
+}
 
-import consoleLog as cl
+import consoleLog as CL
 import smbus
 import time
 bus = smbus.SMBus(1)
 
 
-def readLightSensor():
-    data = 128
+def writeToSlave(identifier, value):
+    slaveID = (identifier & 0b11000000) >> 6
+    v = chr(int(value))
     try:
-        data = bus.read_byte(address_LS) #12222222 1=aboveThreshold 2=value
+        bus.write_byte_data(adress[slaveID], identifier, v)
     except:
-        cl.log(cl.ERROR, "During reading i2c light sensor")
-    b = data >> 7
-    val = data & 127
-    return (b, val)
-
-
-def setLight(val, auto):
-    data = (1 << 7) + (auto << 1) + val
-    print(bin(data))
-    bus.write_byte(address_LS, data) #10000234 1=L/B 2=Buzzer 3=LightAuto 4=Lighton/off
-
-def setBuzzer(val):
-    data = (0 << 7) + (val << 2)
-    bus.write_byte(address_LS, data) #10000234 1=L/B 2=Buzzer 3=LightAuto 4=Lighton/off
-
-def setServo(servo, val):
-    try:
-        bus.write_byte_data(address_SC, servo, chr(int(val)))
-    except:
-        cl.log(cl.ERROR, "During sending servo Data")
+        CL.log(CL.ERROR, "During sending Data " + identifier + ", " + value)
         return

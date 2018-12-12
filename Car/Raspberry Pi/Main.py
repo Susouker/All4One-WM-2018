@@ -1,7 +1,5 @@
 CONFIG_URL = "config.conf"
-LOGGING = False
 SENDRATE = 0.005
-LOGRATE = 5
 
 #--------------------INITIALSETUP--------------------
 if __name__ == '__main__':
@@ -19,7 +17,6 @@ if __name__ == '__main__':
         CL.log(CL.INFO, "Config file read")
     except:
         CL.log(CL.ERROR, "while loading config")
-
 
     PROPERTIES = []
     if int(config.get('input', 'visualizer')):
@@ -41,14 +38,11 @@ if __name__ == '__main__':
         import carOutputManager
     if 'USE_GPIO' in PROPERTIES:
         import gpioManager as GPIO
-    if LOGGING:
-        import logger
-
 
 #--------------------LOOP--------------------
 def loop():
     try:
-        global startTime, lastSend, lastLog, IS_ACTIVE
+        global startTime, lastSend, IS_ACTIVE
 
         #Get input from Mouse Curosr if visualizer is used
         if 'VISUALIZER_AS_INPUT' in PROPERTIES:
@@ -63,12 +57,10 @@ def loop():
             global rChanged
             if rChanged:
                 rChanged = 0
-                visualizer.setInput(r)
+                visualizer.setInput(carOutput)
             visualizer.update()
-
-        if LOGGING and (time.time() - startTime - lastLog) > (1/LOGRATE):
-            logger.log(currentTime, input, r)
-            lastLog += 1/LOGRATE
+        if 'USE_GPIO' in PROPERTIES:
+            GPIO.upadate(time.time() - startTime)
 
     except KeyboardInterrupt:
         IS_ACTIVE = False
@@ -77,40 +69,42 @@ def loop():
 def getR():
     return r
 
+def setCarOutput(category, value, update):
+    global carOutput
+    carOutput[category] = value
+
+    if update:
+        if 'USE_VISUALIZER' in PROPERTIES:
+            global rChanged
+            rChanged = 1
+
+        if 'USE_GPIO' in PROPERTIES:
+            carOutputManager.setCarOutput('P', carOutput)
+
+        #Send Data Back over TCP
+        if (time.time() - startTime - lastSend) > (1/SENDRATE):
+            global lastSend
+            server.sendData(b'A' ,struct.pack('4f', *r[0]))
+            server.sendData(b'T' ,struct.pack('4f', *r[1]))
+            lastSend += 1/SENDRATE
+
 def setInput(input, steeringMode):
-    global r, rChanged
+    global carOutput, rChanged
     if steeringMode == 0:
         r = relativeMotion.calcS(input[0], input[2])
     elif steeringMode == 1:
         r = relativeMotion.calcC(input[0], input[1], input[2])
-    elif steeringMode == -1:
-        r = relativeMotion.calcES(input[0], input[2])
-    elif steeringMode == -4:                                #set r directly
-        r = input
 
-    if 'USE_VISUALIZER' in PROPERTIES:
-        rChanged = 1
-
-    if 'USE_GPIO' in PROPERTIES:
-        carOutputManager.setCarOutput('P', r)
-
-    #Send Data Back over TCP
-    global lastSend, startTime
-    if (time.time() - startTime - lastSend) > (1/SENDRATE):
-        server.sendData(b'A' ,struct.pack('4f', *r[0]))
-        server.sendData(b'T' ,struct.pack('4f', *r[1]))
-        lastSend += 1/SENDRATE
+    setCarOutput(0, r[0], False)
+    setCarOutput(1, r[1], True)
 
 
 #--------------------SETUP--------------------
 def setup():
     CL.log(CL.INFO, "Beginning setup")
     globalVars()
+    CL.log(CL.INFO, PROPERTIES)
 
-    print(PROPERTIES)
-
-    if LOGGING:
-        logger.setupFile(config)
     server.setup(config, [setInput, optionManager.setProperty, getR, VGC.setMode])
     relativeMotion.setup(config)
     VGC.setup(config)
@@ -119,19 +113,21 @@ def setup():
         carOutputManager.setup(config)
     if 'USE_VISUALIZER' in PROPERTIES:
         visualizer.setup(config)
-    if 'USE_GPIO' in PROPERTIES:
-        GPIO.setStatus(1)
 
     CL.log(CL.INFO, "setup is complete")
 
 
 def globalVars():
-    global startTime, lastSend, lastLog, IS_ACTIVE, light
+    global IS_ACTIVE, carOutput, startTime, lastSend
     IS_ACTIVE = True
+    carOutput = (
+    (0,0,0,0),  # Lenkwinkel
+    (0,0,0,0),  # Throttle
+    (0,0,0,0),  # VGC
+    0.5,        # Tow Bar
+    )
     startTime = time.time()
-    lastSend = 0
-    lastLog = 0
-    light = 0
+    lastSend = startTime
 
 
 if __name__ == '__main__':
@@ -143,4 +139,3 @@ if __name__ == '__main__':
     CL.log(CL.INFO, "loop stopping")
     if 'USE_GPIO' in PROPERTIES:
         GPIO.atexit()
-        carOutputManager.atexit()
