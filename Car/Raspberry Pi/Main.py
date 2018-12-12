@@ -60,7 +60,7 @@ def loop():
                 visualizer.setInput(carOutput)
             visualizer.update()
         if 'USE_GPIO' in PROPERTIES:
-            GPIO.upadate(time.time() - startTime)
+            GPIO.update(time.time() - startTime)
 
     except KeyboardInterrupt:
         IS_ACTIVE = False
@@ -123,7 +123,7 @@ def globalVars():
     (0,0,0,0),  # Lenkwinkel
     (0,0,0,0),  # Throttle
     (0,0,0,0),  # VGC
-    0.5,        # Tow Bar
+    0,        # Tow Bar
     ]
     startTime = time.time()
     lastSend = startTime
