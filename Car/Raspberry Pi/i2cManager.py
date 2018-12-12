@@ -16,5 +16,5 @@ def writeToSlave(identifier, value):
     try:
         bus.write_byte_data(adress[slaveID], identifier, v)
     except:
-        CL.log(CL.ERROR, "During sending Data " + identifier + ", " + value)
+        CL.log(CL.ERROR, "During sending Data " + str(identifier) + ", " + str(value))
         return

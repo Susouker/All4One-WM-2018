@@ -119,12 +119,12 @@ def setup():
 def globalVars():
     global IS_ACTIVE, carOutput, startTime, lastSend
     IS_ACTIVE = True
-    carOutput = (
+    carOutput = [
     (0,0,0,0),  # Lenkwinkel
     (0,0,0,0),  # Throttle
     (0,0,0,0),  # VGC
     0.5,        # Tow Bar
-    )
+    ]
     startTime = time.time()
     lastSend = startTime
 
