@@ -103,7 +103,6 @@ def setInput(input, steeringMode):
 def setup():
     CL.log(CL.INFO, "Beginning setup")
     globalVars()
-    CL.log(CL.INFO, PROPERTIES)
 
     server.setup(config, [setInput, optionManager.setProperty, getR, VGC.setMode])
     relativeMotion.setup(config)

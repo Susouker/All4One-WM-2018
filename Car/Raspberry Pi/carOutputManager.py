@@ -18,7 +18,7 @@ def setCarOutput(car, carOutput):
         prototyp(carOutput)
 
 
-def prototyp(carOutput[):
+def prototyp(carOutput):
     global last
     for i in range(4):                                  # Für jedes Rad
         if last[0][i] - carOutput[0][i] > angleThreshold:       # Lenkwinkel
