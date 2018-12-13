@@ -57,17 +57,18 @@ def loop():
         if 'VISUALIZER_AS_INPUT' in PROPERTIES:
             setInput(*visualizer.getInput())
 
-            if 'USE_GPIO' in PROPERTIES:
-                if outputChanged or forceOutput < 4:
-                    forceOutput += 1
-                    if forceOutput > 1 / timeDelta:
-                        forceOutput = 0
-                    carOutputManager.setCarOutput('P', carOutput, forceOutput)
+        if 'USE_GPIO' in PROPERTIES:
+            if outputChanged or forceOutput < 4:
+                forceOutput += 1
+                if forceOutput > 1 / timeDelta:
+                    forceOutput = 0
+                carOutputManager.setCarOutput('P', carOutput, forceOutput)
+        print(forceOutput)
 
-            if outputChanged:
-                outputChanged = 0
-                if 'USE_VISUALIZER' in PROPERTIES:
-                    visualizer.setInput(carOutput)
+        if outputChanged:
+            outputChanged = 0
+            if 'USE_VISUALIZER' in PROPERTIES:
+                visualizer.setInput(carOutput)
 
         #Update
         if 'USE_VISUALIZER' in PROPERTIES:
