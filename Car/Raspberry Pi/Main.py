@@ -1,4 +1,5 @@
 CONFIG_URL = "config.conf"
+timeDelta = 0.04
 
 #--------------------INITIALSETUP--------------------
 if __name__ == '__main__':
@@ -7,6 +8,7 @@ if __name__ == '__main__':
     import time
     import consoleLog as CL
     import configparser
+    from tkinter import TclError
 
     CL.log(CL.INFO, "Beginning initialsetup")
 
@@ -41,25 +43,31 @@ if __name__ == '__main__':
 #--------------------LOOP--------------------
 def loop():
     try:
-        global startTime, lastSend, IS_ACTIVE
+        global IS_ACTIVE, outputChanged, forceOutput, nextTime
         t = time.time() - startTime
+
+        if t > nextTime:
+            CL.log(CL.ERROR, "%d ms skipped" % ((t - nextTime) * 1000))
+            nextTime = t
+        while t < nextTime:
+            t = time.time() - startTime
+        nextTime += timeDelta
 
         #Get input from Mouse Curosr if visualizer is used
         if 'VISUALIZER_AS_INPUT' in PROPERTIES:
-            try:
-                setInput(*visualizer.getInput())
-            except:
-                IS_ACTIVE = False
-                return
+            setInput(*visualizer.getInput())
 
-        global outputChanged
-        if outputChanged:
-            outputChanged = 0
-
-            if 'USE_VISUALIZER':
-                visualizer.setInput(carOutput)
             if 'USE_GPIO' in PROPERTIES:
-                carOutputManager.setCarOutput('P', carOutput)
+                if outputChanged or forceOutput < 4:
+                    forceOutput += 1
+                    if forceOutput > 1 / timeDelta:
+                        forceOutput = 0
+                    carOutputManager.setCarOutput('P', carOutput, forceOutput)
+
+            if outputChanged:
+                outputChanged = 0
+                if 'USE_VISUALIZER' in PROPERTIES:
+                    visualizer.setInput(carOutput)
 
         #Update
         if 'USE_VISUALIZER' in PROPERTIES:
@@ -67,7 +75,7 @@ def loop():
         if 'USE_GPIO' in PROPERTIES:
             GPIO.update(t)
 
-    except KeyboardInterrupt:
+    except (KeyboardInterrupt, TclError):
         IS_ACTIVE = False
         return
 
@@ -107,7 +115,7 @@ def setup():
 
 
 def globalVars():
-    global IS_ACTIVE, carOutput, startTime
+    global IS_ACTIVE, carOutput, startTime, forceOutput, nextTime
     IS_ACTIVE = True
     carOutput = [
     (0,0,0,0),  # Lenkwinkel
@@ -115,6 +123,8 @@ def globalVars():
     (0,0,0,0),  # VGC
     0]          # Tow Bar
     startTime = time.time()
+    forceOutput = 0
+    nextTime = 0
 
 
 if __name__ == '__main__':
