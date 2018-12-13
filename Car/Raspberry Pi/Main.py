@@ -1,5 +1,4 @@
 CONFIG_URL = "config.conf"
-SENDRATE = 0.005
 
 #--------------------INITIALSETUP--------------------
 if __name__ == '__main__':
@@ -43,6 +42,7 @@ if __name__ == '__main__':
 def loop():
     try:
         global startTime, lastSend, IS_ACTIVE
+        t = time.time() - startTime
 
         #Get input from Mouse Curosr if visualizer is used
         if 'VISUALIZER_AS_INPUT' in PROPERTIES:
@@ -52,51 +52,41 @@ def loop():
                 IS_ACTIVE = False
                 return
 
+        global outputChanged
+        if outputChanged:
+            outputChanged = 0
+
+            if 'USE_VISUALIZER':
+                visualizer.setInput(carOutput)
+            if 'USE_GPIO' in PROPERTIES:
+                carOutputManager.setCarOutput('P', carOutput)
+
         #Update
         if 'USE_VISUALIZER' in PROPERTIES:
-            global rChanged
-            if rChanged:
-                rChanged = 0
-                visualizer.setInput(carOutput)
             visualizer.update()
         if 'USE_GPIO' in PROPERTIES:
-            GPIO.update(time.time() - startTime)
+            GPIO.update(t)
 
     except KeyboardInterrupt:
         IS_ACTIVE = False
         return
 
-def getR():
-    return r
+def getCarOutput():
+    return carOutput
 
-def setCarOutput(category, value, update):
-    global carOutput
+def setCarOutput(category, value):
+    global carOutput, outputChanged
     carOutput[category] = value
-
-    if update:
-        if 'USE_VISUALIZER' in PROPERTIES:
-            global rChanged
-            rChanged = 1
-
-        if 'USE_GPIO' in PROPERTIES:
-            carOutputManager.setCarOutput('P', carOutput)
-
-        #Send Data Back over TCP
-        if (time.time() - startTime - lastSend) > (1/SENDRATE):
-            global lastSend
-            server.sendData(b'A' ,struct.pack('4f', *r[0]))
-            server.sendData(b'T' ,struct.pack('4f', *r[1]))
-            lastSend += 1/SENDRATE
+    outputChanged = True
 
 def setInput(input, steeringMode):
-    global carOutput, rChanged
     if steeringMode == 0:
         r = relativeMotion.calcS(input[0], input[2])
     elif steeringMode == 1:
         r = relativeMotion.calcC(input[0], input[1], input[2])
 
-    setCarOutput(0, r[0], False)
-    setCarOutput(1, r[1], True)
+    setCarOutput(0, r[0])
+    setCarOutput(1, r[1])
 
 
 #--------------------SETUP--------------------
@@ -104,7 +94,7 @@ def setup():
     CL.log(CL.INFO, "Beginning setup")
     globalVars()
 
-    server.setup(config, [setInput, optionManager.setProperty, getR, VGC.setMode])
+    server.setup(config, [setInput, optionManager.setProperty, getCarOutput, VGC.setMode])
     relativeMotion.setup(config)
     VGC.setup(config)
     if 'USE_GPIO' in PROPERTIES:
@@ -117,16 +107,14 @@ def setup():
 
 
 def globalVars():
-    global IS_ACTIVE, carOutput, startTime, lastSend
+    global IS_ACTIVE, carOutput, startTime
     IS_ACTIVE = True
     carOutput = [
     (0,0,0,0),  # Lenkwinkel
     (0,0,0,0),  # Throttle
     (0,0,0,0),  # VGC
-    0,        # Tow Bar
-    ]
+    0]          # Tow Bar
     startTime = time.time()
-    lastSend = startTime
 
 
 if __name__ == '__main__':
