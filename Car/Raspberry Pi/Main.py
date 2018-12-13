@@ -59,10 +59,10 @@ def loop():
 
         if 'USE_GPIO' in PROPERTIES:
             if outputChanged or forceOutput < 4:
-                forceOutput += 1
-                if forceOutput > 1 / timeDelta:
-                    forceOutput = 0
                 carOutputManager.setCarOutput('P', carOutput, forceOutput)
+            forceOutput += 1
+            if forceOutput > 1 / timeDelta:
+                forceOutput = 0
         print(forceOutput)
 
         if outputChanged:
