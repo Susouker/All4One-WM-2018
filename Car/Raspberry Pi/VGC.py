@@ -23,3 +23,6 @@ def calcVGC(rotation, current):
 
 def calcVGCFlat():
     return (0, 0, 0, 0)
+
+def calcVGCHigh():
+    return (1, 1, 1, 1)

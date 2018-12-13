@@ -63,7 +63,6 @@ def loop():
             forceOutput += 1
             if forceOutput > 1 / timeDelta:
                 forceOutput = 0
-        print(forceOutput)
 
         if outputChanged:
             outputChanged = 0
