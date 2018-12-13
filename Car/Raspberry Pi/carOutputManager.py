@@ -5,9 +5,9 @@ angleThreshold = 0.02     # 0.02rad sind etwa 1.15°
 threshold = 0.05
 
 LENKUNG   = 0b00100000
-THROTTLE  = 0b00110000
-VGC       = 0b01100000
-TOWBAR    = 0b01110000
+THROTTLE  = 0b01110000
+VGC       = 0b00110000
+TOWBAR    = 0b01100000
 
 def setup(config):
     pass

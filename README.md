@@ -25,7 +25,7 @@ Das Auto (Server) sendet Großbuchstaben und die anderen Geräte (Clients) sende
 | V     | VGC                | Die Höhen der vier Zylinder          | 4xint   -  8 byte | FR, FL, BR, BL                  | 0-1        |
 | s     | einfache Lenkung   | Die Werte der Fernbedienung          | 2xfloat -  8 byte | Lenkwinkel, Gas                 | rad/TBD    |
 | c     | komplexe Lenkung   | Die Werte der Fernbedienung          | 3xfloat - 12 byte | Komplexe Lenkung (2), Gas       | rad/mm/TBD |
-| b     | Tow-Bar            | Die Position der Tow-Bar             | 1xfloat -  4 byte  | Position                        | 0-1        |
+| b     | Tow-Bar            | Die Position der Tow-Bar             | 1xfloat -  4 byte | Position                        | 0-1        |
 | t     | Optionen Toggle    | z.B. An- und Ausschalten des Buzzers | 2xbyte  -  2 byte | Identifier, Wert                | -          |
 | v     | VGC Mode           |                                      | 1xbyte  -  1 byte | Wert                            | -          |
 | d     | Routinen           | Automatisierte Abfolge von Kommandos | 1xbyte  -  1 byte | Wert                            | -          |
@@ -58,10 +58,12 @@ Nach einem Identifier Byte kommt ein Byte mit dem Wert. Wenn es eine Option vier
 
 | Identifier | Name          | Format                  |
 | :------- | :-------------- | :---------------------- |
+| `Arduino 0` |
 | 001000xx | Lenkung         | -1rad - 1rad            |
-| 001100xx | Throttle        | Rückwärts - Vorwärts    |
-| 011000xx | VGC             | Räder unten - oben      |
-| 01110000 | TowBar Position | Rechts - Links          |
+| 001100xx | VGC             | Räder unten - oben      |
+| `Arduino 1` |
+| 01100000 | TowBar Position | Rechts - Links          |
+| 011100xx | Throttle        | Rückwärts - Vorwärts    |
 
 
 ## ToDo

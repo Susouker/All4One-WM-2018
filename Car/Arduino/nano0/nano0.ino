@@ -6,6 +6,7 @@
 #include <Wire.h>
 
 Servo steering[4];
+int targetPosition[4];
 
 long lastUpdate;
 
@@ -16,15 +17,16 @@ void setup() {
   Wire.begin(0x30);
   Wire.onReceive(receiveEvent);
 
-  for (size_t i = 0; i < 4; i++) {
+  for (size_t i = 0; i < 4; i++) { // Lenkung
     steering[i].attach(i + PIN_OFFSET);
   }
-  for (size_t i = 0; i < 8; i++) {
+  for (size_t i = 0; i < 8; i++) { // VGC motor driver  
     pinMode(i + 4 + PIN_OFFSET, OUTPUT);
   }
 }
 
 void loop() {
+  //TIMEOUT -> Alles geht aus
   if (millis() > lastUpdate + TIMEOUT) {
     for (size_t i = 0; i < 4; i++) {
       steering[i].write(90);
@@ -33,6 +35,11 @@ void loop() {
       digitalWrite(i + 4 + PIN_OFFSET, LOW);
     }
   }
+
+  //VGC: soll mit Poti vergleichen und bewegen
+  for (size_t i = 0; i < 4; i++) {
+    int v = analogRead(i);
+  }
 }
 
 void receiveEvent(int howMany) {
@@ -40,16 +47,14 @@ void receiveEvent(int howMany) {
   if (howMany == 2) {
     int ident = Wire.read();
     int value = Wire.read() - 128;
+
     if ((ident & 0b00111100) == 32) { // Lenkung
       steering[ident & 0b00000011].write((value * 0.4476f) + 90);
     }
-    if ((ident & 0b00111100) == 48) { // Throttle
-      size_t pin = PIN_OFFSET + 4 + ((ident & 0b00000011) * 2);
-      if (value > 0){
-        digitalWrite(pin + 1, LOW);
-      }else if (value < 0){
-        Serial.println(pin + 1);        
-      }
+
+    if ((ident & 0b00111100) == 48) { // VGC
+      targetPosition[(ident & 0b00000011)] = value;
     }
+
   }
 }
