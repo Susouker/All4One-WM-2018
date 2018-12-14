@@ -28,16 +28,16 @@ def prototyp(carOutput, forceSend):
             last[0][i] = carOutput[0][i]
 
         if abs(last[1][i] - carOutput[1][i]) > threshold or forceSend == 2:            # Motorleisung
-            v = min()(carOutput[1][i] + 1) * 128, 127)
+            v = min((carOutput[1][i] + 1) * 128, 255)
             I2C.writeToSlave(THROTTLE + i, v)
             last[1][i] = carOutput[1][i]
 
         if abs(last[2][i] - carOutput[2][i]) > threshold or forceSend == 3:            # VGC
-            v = (carOutput[2][i]) * 256
+            v = min((carOutput[2][i]) * 256, 255)
             I2C.writeToSlave(VGC + i, v)
             last[2][i] = carOutput[2][i]
 
     if abs(last[3] - carOutput[3]) > threshold or forceSend == 0:                      # Tow Bar
-        v = (carOutput[3] + 1) * 128
+        v = min((carOutput[3] + 1) * 128, 255)
         I2C.writeToSlave(TOWBAR, v)
         last[3] = carOutput[3]

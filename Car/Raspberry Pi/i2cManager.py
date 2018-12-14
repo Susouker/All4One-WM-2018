@@ -9,6 +9,7 @@ import smbus2
 import time
 bus = smbus2.SMBus(1)
 
+disabledAddresses = []
 
 def writeToSlave(identifier, value):
     slaveID = (identifier & 0b11000000) >> 6
@@ -16,5 +17,7 @@ def writeToSlave(identifier, value):
     try:
         bus.write_byte_data(address[slaveID], identifier, v)
     except OSError:
-        CL.log(CL.ERROR, "During sending Data; " + str(address[slaveID]) + ", " + str(identifier) + ", " + str(value))
+        if not address[slaveID] in disabledAddresses:
+            CL.log(CL.ERROR, "During sending Data; " + str(address[slaveID]))
+            disabledAddresses.append(address[slaveID])
         return
