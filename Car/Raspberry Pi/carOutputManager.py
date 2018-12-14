@@ -1,4 +1,5 @@
 import i2cManager as I2C
+from math import *
 
 last = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], 0]
 angleThreshold = 0.02     # 0.02rad sind etwa 1.15°
@@ -27,7 +28,7 @@ def prototyp(carOutput, forceSend):
             last[0][i] = carOutput[0][i]
 
         if abs(last[1][i] - carOutput[1][i]) > threshold or forceSend == 2:            # Motorleisung
-            v = (carOutput[1][i] + 1) * 128
+            v = min()(carOutput[1][i] + 1) * 128, 127)
             I2C.writeToSlave(THROTTLE + i, v)
             last[1][i] = carOutput[1][i]
 

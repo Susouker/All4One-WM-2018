@@ -1,6 +1,7 @@
 
 #define TIMEOUT 1500
 #define PIN_OFFSET 2
+#define THRESHOLD 4
 
 #include <Servo.h>
 #include <Wire.h>
@@ -10,6 +11,7 @@ int targetPosition[4];
 
 long lastUpdate;
 
+int midPoint[4] = {100,100,100,100};
 
 void setup() {
   lastUpdate = millis();
@@ -20,7 +22,7 @@ void setup() {
   for (size_t i = 0; i < 4; i++) { // Lenkung
     steering[i].attach(i + PIN_OFFSET);
   }
-  for (size_t i = 0; i < 8; i++) { // VGC motor driver  
+  for (size_t i = 0; i < 8; i++) { // VGC motor driver
     pinMode(i + 4 + PIN_OFFSET, OUTPUT);
   }
 }
@@ -36,9 +38,20 @@ void loop() {
     }
   }
 
-  //VGC: soll mit Poti vergleichen und bewegen
+  //VGC: Soll mit Poti vergleichen und bewegen
   for (size_t i = 0; i < 4; i++) {
     int v = analogRead(i);
+    size_t pin = PIN_OFFSET + (i * 2);
+    if (v > midPoint[i] + THRESHOLD) {
+      digitalWrite(pin + 1, LOW);
+      digitalWrite(pin, HIGH);
+    } else if (v < midPoint[i] - THRESHOLD) {
+      digitalWrite(pin, LOW);
+      digitalWrite(pin + 1, HIGH);
+    } else {
+      digitalWrite(pin, LOW);
+      digitalWrite(pin + 1, LOW);
+    }
   }
 }
 

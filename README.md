@@ -52,7 +52,7 @@ Das Auto (Server) sendet Großbuchstaben und die anderen Geräte (Clients) sende
 | D     | Demo         | Einmal alle Räder von rechts nach links lenken. Jeden VGC Zylinder nach oben und unten und Lichter an aus etc. |
 | 0     |              | vielleicht noch mehr vielleicht auch nicht         |
 
-##### I2C oder SPI zwischen RPi und Arduino Slaves
+### I2C oder SPI zwischen RPi und Arduino Slaves
 
 Nach einem Identifier Byte kommt ein Byte mit dem Wert. Wenn es eine Option vier mal gibt (FR,FL,BR,BL) geben die letzten beiden Bits vorne-hinten und rechts-links an.
 
