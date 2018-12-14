@@ -16,6 +16,8 @@ int midPoint[4] = {100,100,100,100};
 void setup() {
   lastUpdate = millis();
 
+  Serial.begin(9600);
+
   Wire.begin(0x30);
   Wire.onReceive(receiveEvent);
 
@@ -41,7 +43,7 @@ void loop() {
   //VGC: Soll mit Poti vergleichen und bewegen
   for (size_t i = 0; i < 4; i++) {
     int v = analogRead(i);
-    size_t pin = PIN_OFFSET + (i * 2);
+    size_t pin = PIN_OFFSET + 4 + (i * 2);
     if (v > midPoint[i] + THRESHOLD) {
       digitalWrite(pin + 1, LOW);
       digitalWrite(pin, HIGH);
@@ -53,6 +55,7 @@ void loop() {
       digitalWrite(pin + 1, LOW);
     }
   }
+  delay(10);
 }
 
 void receiveEvent(int howMany) {
@@ -63,6 +66,7 @@ void receiveEvent(int howMany) {
 
     if ((ident & 0b00111100) == 32) { // Lenkung
       steering[ident & 0b00000011].write((value * 0.4476f) + 90);
+      Serial.println(value);
     }
 
     if ((ident & 0b00111100) == 48) { // VGC
