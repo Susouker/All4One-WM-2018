@@ -33,7 +33,7 @@ def cbComplexSteering(data):
 
 def cbTowBar(data):
     r = struct.unpack('f', data[0:4*1])
-    cbFunctions[4](3, r)
+    cbFunctions[4](3, r[0])
     return data[4*1:]
 
 
