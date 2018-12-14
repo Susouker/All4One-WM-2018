@@ -18,13 +18,11 @@ SOFTPWM_DEFINE_CHANNEL(11, DDRB, PORTB, PORTB3);  //Arduino pin 11
 
 SOFTPWM_DEFINE_OBJECT_WITH_PWM_LEVELS(10, 128);
 
-int towBarTargetPosition = 512;
+int towBarTargetPosition = 128;
 
 long lastUpdate;
 
 void setup() {
-  Serial.begin(9600);
-
   lastUpdate = millis();
 
   Wire.begin(0x31);
@@ -48,17 +46,16 @@ void loop() {
   }
 
   //TowBar: soll mit Poti vergleichen und bewegen
-  int difference = analogRead(A0) - towBarTargetPosition;
-      size_t pin = PIN_OFFSET + 8;
+  int difference = (analogRead(A0) / 4) - towBarTargetPosition;
   if (difference > THRESHOLD) {
-    Palatis::SoftPWM.set(pin, 128 + difference / 4);
-    Palatis::SoftPWM.set(pin + 1, 0);
+    Palatis::SoftPWM.set(8, 128 + difference / 2);
+    Palatis::SoftPWM.set(9, 0);
   } else if (difference < -THRESHOLD) {
-    Palatis::SoftPWM.set(pin + 1, 128 - difference / 4);
-    Palatis::SoftPWM.set(pin, 0);
+    Palatis::SoftPWM.set(9, 128 - difference / 2);
+    Palatis::SoftPWM.set(8, 0);
   } else {
-    Palatis::SoftPWM.set(pin, 0);
-    Palatis::SoftPWM.set(pin + 1, 0);
+    Palatis::SoftPWM.set(8, 0);
+    Palatis::SoftPWM.set(9, 0);
   }
 }
 
@@ -74,7 +71,7 @@ void receiveEvent(int howMany) {
     }
 
     if ((ident & 0b00111100) == 48) { // Throttle
-      size_t pin = PIN_OFFSET + ((ident & 0b00000011) * 2);
+      size_t pin = ((ident & 0b00000011) * 2);
       if (value > 0) {
         Palatis::SoftPWM.set(pin, value);
         Palatis::SoftPWM.set(pin + 1, 0);

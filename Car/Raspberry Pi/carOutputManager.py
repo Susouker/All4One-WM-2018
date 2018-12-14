@@ -38,6 +38,6 @@ def prototyp(carOutput, forceSend):
             last[2][i] = carOutput[2][i]
 
     if abs(last[3] - carOutput[3]) > threshold or forceSend == 0:                      # Tow Bar
-        v = min((carOutput[3] + 1) * 128, 255)
+        v = min((carOutput[3]) * 256, 255)
         I2C.writeToSlave(TOWBAR, v)
         last[3] = carOutput[3]

@@ -121,7 +121,7 @@ def globalVars():
     (0,0,0,0),  # Lenkwinkel
     (0,0,0,0),  # Throttle
     (0,0,0,0),  # VGC
-    0]          # Tow Bar
+    0.5]          # Tow Bar
     startTime = time.time()
     forceOutput = 0
     nextTime = 0
