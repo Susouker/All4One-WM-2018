@@ -1,6 +1,7 @@
 
 #define TIMEOUT 1500
 #define PIN_OFFSET 2
+#define THRESHOLD 4
 
 #include <Wire.h>
 #include <SoftPWM.h>
@@ -17,7 +18,7 @@ SOFTPWM_DEFINE_CHANNEL(11, DDRB, PORTB, PORTB3);  //Arduino pin 11
 
 SOFTPWM_DEFINE_OBJECT_WITH_PWM_LEVELS(10, 128);
 
-int towBarTargetPosition;
+int towBarTargetPosition = 512;
 
 long lastUpdate;
 
@@ -30,8 +31,8 @@ void setup() {
   Wire.onReceive(receiveEvent);
 
   Palatis::SoftPWM.begin(60);
-  
-        Palatis::SoftPWM.set(7, 128);
+
+  Palatis::SoftPWM.set(7, 128);
 
   for (size_t i = 0; i < 10; i++) { // MotorDriver outputs
     pinMode(i + PIN_OFFSET, OUTPUT);
@@ -47,7 +48,18 @@ void loop() {
   }
 
   //TowBar: soll mit Poti vergleichen und bewegen
-  int v = analogRead(A0);
+  int difference = analogRead(A0) - towBarTargetPosition;
+      size_t pin = PIN_OFFSET + 8;
+  if (difference > THRESHOLD) {
+    Palatis::SoftPWM.set(pin, 128 + difference / 4);
+    Palatis::SoftPWM.set(pin + 1, 0);
+  } else if (difference < -THRESHOLD) {
+    Palatis::SoftPWM.set(pin + 1, 128 - difference / 4);
+    Palatis::SoftPWM.set(pin, 0);
+  } else {
+    Palatis::SoftPWM.set(pin, 0);
+    Palatis::SoftPWM.set(pin + 1, 0);
+  }
 }
 
 
@@ -56,7 +68,7 @@ void receiveEvent(int howMany) {
   if (howMany == 2) {
     int ident = Wire.read();
     int value = Wire.read() - 128;
-    
+
     if ((ident & 0b00111100) == 32) { // TowBar
       towBarTargetPosition = value;
     }
