@@ -6,12 +6,13 @@
 #include <Servo.h>
 #include <Wire.h>
 
-Servo steering[4];
-int targetPosition[4];
-
 long lastUpdate;
 
-int midPoint[4] = {100,100,100,100};
+Servo steering[4];
+
+int VGCtargetPosition[4] = {100,100,100,100};
+int VGCmin[4] = {200,200,200,200};
+int VGCmax[4] = {800,800,800,800};
 
 void setup() {
   lastUpdate = millis();
@@ -42,12 +43,13 @@ void loop() {
 
   //VGC: Soll mit Poti vergleichen und bewegen
   for (size_t i = 0; i < 4; i++) {
-    int v = analogRead(i);
-    size_t pin = PIN_OFFSET + 4 + (i * 2);
-    if (v > midPoint[i] + THRESHOLD) {
+  int currentPos = analogRead(i) * (VGCmax[i] - VGCmin[i]) / 1024 + VGCmin[i];
+  int difference = currentPos - VGCtargetPosition[i];
+
+  if (difference > THRESHOLD) {
       digitalWrite(pin + 1, LOW);
       digitalWrite(pin, HIGH);
-    } else if (v < midPoint[i] - THRESHOLD) {
+    } else if (difference < -THRESHOLD) {
       digitalWrite(pin, LOW);
       digitalWrite(pin + 1, HIGH);
     } else {
@@ -70,7 +72,7 @@ void receiveEvent(int howMany) {
     }
 
     if ((ident & 0b00111100) == 48) { // VGC
-      targetPosition[(ident & 0b00000011)] = value;
+      VGCtargetPosition[(ident & 0b00000011)] = value;
     }
 
   }

@@ -5,6 +5,9 @@
 
 #include <Wire.h>
 #include <SoftPWM.h>
+
+long lastUpdate;
+
 SOFTPWM_DEFINE_CHANNEL(0, DDRD, PORTD, PORTD2);  //Arduino pin 2
 SOFTPWM_DEFINE_CHANNEL(1, DDRD, PORTD, PORTD3);  //Arduino pin 3
 SOFTPWM_DEFINE_CHANNEL(2, DDRD, PORTD, PORTD4);  //Arduino pin 4
@@ -19,8 +22,8 @@ SOFTPWM_DEFINE_CHANNEL(9, DDRB, PORTB, PORTB3);  //Arduino pin 11
 SOFTPWM_DEFINE_OBJECT_WITH_PWM_LEVELS(10, 128);
 
 int towBarTargetPosition = 128;
-
-long lastUpdate;
+int towBarMin = 200;
+int towBarMax = 800;
 
 void setup() {
   lastUpdate = millis();
@@ -46,7 +49,9 @@ void loop() {
   }
 
   //TowBar: soll mit Poti vergleichen und bewegen
-  int difference = (analogRead(A0) / 4) - towBarTargetPosition;
+  int currentPos = analogRead(0) * (towBarMax - towBarMin) / 1024 + towBarMin;
+  int difference = currentPos - towBarTargetPosition;
+
   if (difference > THRESHOLD) {
     Palatis::SoftPWM.set(8, 128 + difference / 2);
     Palatis::SoftPWM.set(9, 0);
