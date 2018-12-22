@@ -22,8 +22,8 @@ SOFTPWM_DEFINE_CHANNEL(9, DDRB, PORTB, PORTB3);  //Arduino pin 11
 SOFTPWM_DEFINE_OBJECT_WITH_PWM_LEVELS(10, 128);
 
 int towBarTargetPosition = 128;
-int towBarMin = 200;
-int towBarMax = 800;
+int towBarMin = 266;
+int towBarMax = 724;
 
 void setup() {
   lastUpdate = millis();

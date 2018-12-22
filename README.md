@@ -22,7 +22,7 @@ Das Auto (Server) sendet Großbuchstaben und die anderen Geräte (Clients) sende
 | A     | Angle              | Die Winkel der vier Räder            | 4xfloat - 16 byte | FR, FL, BR, BL                  | rad        |
 | T     | Throttle           | Die Motorleisungen der vier Räder    | 4xfloat - 16 byte | FR, FL, BR, BL                  | TBD        |
 | R     | Rotation           | Die Rotation des Autos               | 2xfloat -  8 byte | Rechts-Links, Vorne-Hinten      | rad        |
-| V     | VGC                | Die Höhen der vier Zylinder          | 4xint   -  8 byte | FR, FL, BR, BL                  | 0-1        |
+| V     | VGC                | Die Höhen der vier VGC Achsen        | 4xint   -  8 byte | FR, FL, BR, BL                  | 0-1        |
 | s     | einfache Lenkung   | Die Werte der Fernbedienung          | 2xfloat -  8 byte | Lenkwinkel, Gas                 | rad/TBD    |
 | c     | komplexe Lenkung   | Die Werte der Fernbedienung          | 3xfloat - 12 byte | Komplexe Lenkung (2), Gas       | rad/mm/TBD |
 | b     | Tow-Bar            | Die Position der Tow-Bar             | 1xfloat -  4 byte | Position                        | 0-1        |
@@ -41,7 +41,8 @@ Das Auto (Server) sendet Großbuchstaben und die anderen Geräte (Clients) sende
 
 | Wert  | Name         | Beschreibung                                       |
 | :---- | :----------- | :------------------------------------------------- |
-| F     | Flat         | Alle Magnete aus -> ganz unten                     |
+| F     | Unten        | geringster Schwerpunkt                             |
+| P     | Oben         | höchster Bodenabstand                              |
 | A     | Articulation | Keine Ahnung was, das wird sich noch herausstellen |
 | 0     |              | vielleicht noch mehr vielleicht auch nicht         |
 
@@ -49,7 +50,7 @@ Das Auto (Server) sendet Großbuchstaben und die anderen Geräte (Clients) sende
 
 | Wert  | Name         | Beschreibung                                                                                                   |
 | :---- | :----------- | :------------------------------------------------------------------------------------------------------------- |
-| D     | Demo         | Einmal alle Räder von rechts nach links lenken. Jeden VGC Zylinder nach oben und unten und Lichter an aus etc. |
+| D     | Demo         | Einmal alle Räder von rechts nach links lenken. VGC nach oben und unten und Lichter an aus etc. |
 | 0     |              | vielleicht noch mehr vielleicht auch nicht         |
 
 ### I2C oder SPI zwischen RPi und Arduino Slaves
