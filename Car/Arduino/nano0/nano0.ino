@@ -10,9 +10,10 @@ long lastUpdate;
 
 Servo steering[4];
 
-int VGCtargetPosition[4] = {100,100,100,100};
+int VGCtargetPosition[4] = {0,0,0,0};
 int VGCmin[4] = {310,555,480,510};
 int VGCmax[4] = {460,777,630,660};
+float VGCfactor[4] = {0, 0, 0, 0};
 
 void setup() {
   lastUpdate = millis();
@@ -27,6 +28,9 @@ void setup() {
   }
   for (size_t i = 0; i < 8; i++) { // VGC motor driver
     pinMode(i + 4 + PIN_OFFSET, OUTPUT);
+  }
+  for (size_t i = 0; i < 4; i++) {
+    VGCfactor[i] = (float)256 / (VGCmax[i] - VGCmin[i]);
   }
 }
 
@@ -44,9 +48,11 @@ void loop() {
   //VGC: Soll mit Poti vergleichen und bewegen
   //Strom auf den geraden Pins führt dazu, dass sich der VGC Arm hoch bewegt und der Poti-Wert kleiner wird
   for (size_t i = 0; i < 4; i++) {
-    int currentPos = analogRead(i) * (VGCmax[i] - VGCmin[i]) / 1024 + VGCmin[i];
-    int difference = currentPos - VGCtargetPosition[i];
     size_t pin = PIN_OFFSET + 4 + i * 2;
+
+    int currentPos = (analogRead(i) - VGCmin[i]) * VGCfactor[i];
+    int difference = currentPos - VGCtargetPosition[i];
+
     if (difference > THRESHOLD) {
       digitalWrite(pin, HIGH);
       digitalWrite(pin + 1, LOW);

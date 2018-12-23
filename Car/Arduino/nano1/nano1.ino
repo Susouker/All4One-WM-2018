@@ -24,6 +24,7 @@ SOFTPWM_DEFINE_OBJECT_WITH_PWM_LEVELS(10, 128);
 int towBarTargetPosition = 128;
 int towBarMin = 266;
 int towBarMax = 724;
+float towBarFactor = 0;
 
 void setup() {
   lastUpdate = millis();
@@ -38,6 +39,8 @@ void setup() {
   for (size_t i = 0; i < 10; i++) { // MotorDriver outputs
     pinMode(i + PIN_OFFSET, OUTPUT);
   }
+
+  towBarFactor = (float)256 / (towBarMax - towBarMin);
 }
 
 void loop() {
@@ -49,7 +52,7 @@ void loop() {
   }
 
   //TowBar: soll mit Poti vergleichen und bewegen
-  int currentPos = analogRead(0) * (towBarMax - towBarMin) / 1024 + towBarMin;
+  int currentPos = (analogRead(0) - towBarMin) * towBarFactor;
   int difference = currentPos - towBarTargetPosition;
 
   if (difference > THRESHOLD) {
