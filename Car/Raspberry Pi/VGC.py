@@ -13,6 +13,7 @@ def setup(config):
 
 
 def setMode(m):
+    global mode
     CL.log(CL.VGC, "Mode set to %s" % m)
     mode = m
 
@@ -26,10 +27,10 @@ def calcVGC(time):
         return calcVGCFlat()
 
 def calcVGCFlat():
-    return [0, 0, 0, 0]
+    return (0, 0, 0, 0)
 
 def calcVGCHigh():
-    return [1, 1, 1, 1]
+    return (1, 1, 1, 1)
 
 def calcVGCArti(time):
-    return [(time) % 2, (time + 1) % 2, (time + 1) % 2, (time) % 2]
+    return ((time) % 2, (time + 1) % 2, (time + 1) % 2, (time) % 2)
