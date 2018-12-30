@@ -20,7 +20,7 @@ def setMode(m):
 def calcVGC(time):
     if mode == b'P':
         calcVGCHigh()
-    else if mode == b'A':
+    elif mode == b'A':
         calcVGCArti(time)
     else #if mode == b'F':
         calcVGCFlat()
