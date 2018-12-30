@@ -11,8 +11,8 @@ long lastUpdate;
 Servo steering[4];
 
 int VGCtargetPosition[4] = {256,256,256,256};
-int VGCmin[4] = {320,650,480,510};
-int VGCmax[4] = {470,800,630,660};
+int VGCmin[4] = {370,700,550,560};
+int VGCmax[4] = {520,850,700,710};
 float VGCfactor[4] = {0, 0, 0, 0};
 
 void setup() {
