@@ -22,8 +22,8 @@ SOFTPWM_DEFINE_CHANNEL(9, DDRB, PORTB, PORTB3);  //Arduino pin 11
 SOFTPWM_DEFINE_OBJECT_WITH_PWM_LEVELS(10, 128);
 
 int towBarTargetPosition = 128;
-int towBarMin = 266;
-int towBarMax = 724;
+int towBarMin = 270;
+int towBarMax = 740;
 float towBarFactor = 0;
 
 void setup() {
@@ -33,8 +33,6 @@ void setup() {
   Wire.onReceive(receiveEvent);
 
   Palatis::SoftPWM.begin(60);
-
-  Palatis::SoftPWM.set(7, 128);
 
   for (size_t i = 0; i < 10; i++) { // MotorDriver outputs
     pinMode(i + PIN_OFFSET, OUTPUT);
@@ -56,10 +54,10 @@ void loop() {
   int difference = currentPos - towBarTargetPosition;
 
   if (difference > THRESHOLD) {
-    Palatis::SoftPWM.set(8, 128 + difference / 2);
+    Palatis::SoftPWM.set(8, 10 + difference * 0.7);
     Palatis::SoftPWM.set(9, 0);
   } else if (difference < -THRESHOLD) {
-    Palatis::SoftPWM.set(9, 128 - difference / 2);
+    Palatis::SoftPWM.set(9, 10 - difference * 0.7);
     Palatis::SoftPWM.set(8, 0);
   } else {
     Palatis::SoftPWM.set(8, 0);
