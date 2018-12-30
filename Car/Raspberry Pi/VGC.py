@@ -18,12 +18,12 @@ def setMode(m):
 
 
 def calcVGC(time):
-    if mode == b'F':
-        calcVGCFlat()
     if mode == b'P':
         calcVGCHigh()
-    if mode == b'A':
+    else if mode == b'A':
         calcVGCArti(time)
+    else #if mode == b'F':
+        calcVGCFlat()
 
 def calcVGCFlat():
     return [0, 0, 0, 0]
