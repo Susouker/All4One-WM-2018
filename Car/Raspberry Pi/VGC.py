@@ -26,10 +26,10 @@ def calcVGC(time):
         calcVGCArti(time)
 
 def calcVGCFlat():
-    return (0, 0, 0, 0)
+    return [0, 0, 0, 0]
 
 def calcVGCHigh():
-    return (1, 1, 1, 1)
+    return [1, 1, 1, 1]
 
 def calcVGCArti(time):
-    return ((time) % 2, (time + 1) % 2, (time + 1) % 2, (time) % 2)
+    return [(time) % 2, (time + 1) % 2, (time + 1) % 2, (time) % 2]
