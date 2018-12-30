@@ -1,3 +1,5 @@
+// nano 1
+// TowBar und Throttle
 
 #define TIMEOUT 1500
 #define PIN_OFFSET 2
@@ -69,7 +71,7 @@ void loop() {
 void receiveEvent(int howMany) {
   lastUpdate = millis();
   if (howMany == 2) {
-    int ident = Wire.read();    
+    int ident = Wire.read();
     int value = Wire.read();
 
     if ((ident & 0b00111100) == 32) { // TowBar

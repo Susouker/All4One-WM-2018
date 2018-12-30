@@ -1,3 +1,5 @@
+// nano 0
+// Lenkung und VGC
 
 #define TIMEOUT 1500
 #define PIN_OFFSET 2
