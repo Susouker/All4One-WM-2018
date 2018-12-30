@@ -1,7 +1,7 @@
 from math import *
 import consoleLog as CL
 
-mode = 0
+mode = b'P'
 
 width = 0.15
 wheelbase = 0.3
