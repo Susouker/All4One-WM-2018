@@ -21,13 +21,13 @@ def parse(data):
 
 def cbSimpleSteering(data):
     r = struct.unpack('ff', data[0:4*2])
-    cbFunctions[0]((r[0], 0, r[1]), 0)
+    cbFunctions[0]((r[0], 0, -r[1]), 0)
     return data[4*2:]
 
 
 def cbComplexSteering(data):
     r = struct.unpack('fff', data[0:4*3])
-    cbFunctions[0]((r[0], r[1], r[2]), 1)
+    cbFunctions[0]((r[0], r[1], -r[2]), 1)
     return data[4*3:]
 
 
