@@ -69,12 +69,14 @@ void loop() {
 void receiveEvent(int howMany) {
   lastUpdate = millis();
   if (howMany == 2) {
-    int ident = Wire.read();
-    int value = Wire.read() - 128;
+    int ident = Wire.read();    
+    int value = Wire.read();
 
     if ((ident & 0b00111100) == 32) { // TowBar
       towBarTargetPosition = value;
     }
+
+    value -= 128;
 
     if ((ident & 0b00111100) == 48) { // Throttle
       size_t pin = ((ident & 0b00000011) * 2);
