@@ -29,6 +29,10 @@ class VGCSelectFragment : Fragment() {
         button2.setOnClickListener { _: View ->
             setVGCMode('A')
         }
+
+        button3.setOnClickListener { _: View ->
+            setVGCMode('P')
+        }
     }
 
     private  fun setVGCMode(mode : Char){

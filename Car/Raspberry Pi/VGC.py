@@ -17,12 +17,19 @@ def setMode(m):
     mode = m
 
 
-def calcVGC(rotation, current):
+def calcVGC(time):
     if mode == b'F':
         calcVGCFlat()
+    if mode == b'P':
+        calcVGCHigh()
+    if mode == b'A':
+        calcVGCArti(time)
 
 def calcVGCFlat():
     return (0, 0, 0, 0)
 
 def calcVGCHigh():
     return (1, 1, 1, 1)
+
+def calcVGCArti(time):
+    return ((time) % 2, (time + 1) % 2, (time + 1) % 2, (time) % 2)

@@ -6,7 +6,7 @@ from tkinter import *
 from math import *
 
 PORT = 14044
-HOST = '192.168.178.159'
+HOST = 'maltePi'
 #HOST = 'localhost'
 SENDRATE = 30
 canvasWidth = 640

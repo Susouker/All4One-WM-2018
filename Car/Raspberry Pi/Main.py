@@ -53,6 +53,8 @@ def loop():
             t = time.time() - startTime
         nextTime += timeDelta
 
+        setCarOutput(2, VGC.calcVGC(t))
+
         #Get input from Mouse Curosr if visualizer is used
         if 'VISUALIZER_AS_INPUT' in PROPERTIES:
             setInput(*visualizer.getInput())
