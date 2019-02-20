@@ -53,6 +53,8 @@ Nach einem Identifier Byte kommt ein Byte mit dem Wert. Wenn es eine Option vier
 | `Arduino 0` |
 | 001000xx | Lenkung         | -1rad - 1rad            |
 | 001100xx | VGC             | Räder unten - oben      |
+| 00111yxx | VGC min/max adj | y: min/max, x: welches Rad, folgendes Byte: signed 8 bit int  |
+| 00101000 | VGC min/max save | folgendes Byte wird gelesen und ignoriert  |
 | `Arduino 1` |
 | 01100000 | TowBar Position | Rechts - Links          |
 | 011100xx | Throttle        | Rückwärts - Vorwärts    |
