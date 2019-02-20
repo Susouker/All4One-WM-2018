@@ -94,5 +94,8 @@ void receiveEvent(int howMany) {
       }
     }
 
+  } else { // iwas falsch also lesen und ignorieren
+    while (Wire.available())
+      Wire.read();
   }
 }

@@ -7,14 +7,15 @@
 
 #include <Servo.h>
 #include <Wire.h>
+#include <EEPROM.h>
 
 long lastUpdate;
 
 Servo steering[4];
 
-int VGCtargetPosition[4] = {256,256,256,256};
-int VGCmin[4] = {0,0,0,0};
-int VGCmax[4] = {0,0,0,0};
+int VGCtargetPosition[4] = {256, 256, 256, 256};
+int VGCmin[4] = {0, 0, 0, 0};
+int VGCmax[4] = {0, 0, 0, 0};
 float VGCfactor[4] = {0, 0, 0, 0};
 
 void setup() {
@@ -71,16 +72,16 @@ void moveVGC() {
   delay(10);
 }
 
-void readEEPROM(){
+void readEEPROM() {
   int value;
   uint8_t address;
   for (size_t m = 0; m < 2; m++) {
     for (size_t i = 0; i < 4; i++) {
-      address = ((m<<3) + (i<<1));
+      address = ((m << 3) + (i << 1));
       value = (EEPROM.read(address) << 8); // HIGH BYTE
       value += EEPROM.read(address + 1); // LOW BYTE
 
-      if(m==0)
+      if (m == 0)
         VGCmin[i] = value;
       else
         VGCmax[i] = value;
@@ -89,13 +90,13 @@ void readEEPROM(){
   calcVGCfactors();
 }
 
-void writeEEPROM(){
+void writeEEPROM() {
   int value;
   uint8_t address;
   for (size_t m = 0; m < 2; m++) {
     for (size_t i = 0; i < 4; i++) {
-      address = ((m<<3) + (i<<1));
-      if(m==0)
+      address = ((m << 3) + (i << 1));
+      if (m == 0)
         value = VGCmin[i];
       else
         value = VGCmax[i];
@@ -106,7 +107,7 @@ void writeEEPROM(){
   }
 }
 
-void calcVGCfactors(){
+void calcVGCfactors() {
   for (size_t i = 0; i < 4; i++) {
     VGCfactor[i] = (float)256 / (VGCmax[i] - VGCmin[i]);
   }
@@ -120,7 +121,6 @@ void receiveEvent(int howMany) {
 
     if ((ident & 0b00111100) == 32) { // Lenkung
       steering[ident & 0b00000011].write((value * 0.4476f) + 90);
-      Serial.println(value);
     }
 
     if ((ident & 0b00111100) == 48) { // VGC
@@ -128,7 +128,7 @@ void receiveEvent(int howMany) {
     }
 
     if ((ident & 0b00111000) == 56) { // VGC min/max adj
-      if(min(ident & 0b00000100))
+      if (ident & 0b00000100)
         VGCmin[(ident & 0b00000011)] += value;
       else
         VGCmax[(ident & 0b00000011)] += value;
@@ -136,9 +136,12 @@ void receiveEvent(int howMany) {
       calcVGCfactors();
     }
 
-    if ((ident & 0b00111000) == 40) { // VGC min/max adj
+    if ((ident & 0b00111000) == 40) { // VGC min/max save
       writeEEPROM();
     }
 
+  } else { // iwas falsch also lesen und ignorieren
+    while (Wire.available())
+      Wire.read();
   }
 }
