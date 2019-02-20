@@ -3,8 +3,9 @@ import display as di
 from math import *
 
 
-def setup(config):
-    global canvasWidth, canvasHeight, canvasScale, width, wheelbase, wheelWidth, wheelDiameter, wheelOffset
+def setup(config, _cbFunctions):
+    global canvasWidth, canvasHeight, canvasScale, width, wheelbase, wheelWidth, wheelDiameter, wheelOffset, cbFunctions
+    cbFunctions = _cbFunctions
     canvasWidth = int(config.get('display', 'width'))
     canvasHeight = int(config.get('display', 'height'))
     canvasScale = float(config.get('display', 'scale'))
@@ -21,8 +22,7 @@ def setup(config):
 
 
 def setInput(r):
-    msg = "angle: %s°" % angleText#"; light is %s" % (angleText, "on" if light else "off")
-    di.update(r, msg)
+    di.update(r, angleText)
 
 def update():
     canvas.pack()
@@ -35,13 +35,18 @@ def getInput():
     dx /= canvasScale
     dy /= -canvasScale
 
-    angle = atan2(dx, dy)
-    l = hypot (dx, dy)
+    mode = 4
+    if dy > 0.1:
+        mode = 7
+    elif dy < -0.1:
+        mode = 6
+    #cbFunctions[0](mode)
 
     global angleText
-    angleText = "%d"%(degrees(angle))
+    angleText = "%f, %f"%(dx, dy)
 
-    return ((angle, l, 1), 1)
+
+    return (dx, 1)
 
 
 def setupCanvas():

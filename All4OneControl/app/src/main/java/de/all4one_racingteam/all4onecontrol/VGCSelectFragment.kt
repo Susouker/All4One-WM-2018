@@ -37,7 +37,7 @@ class VGCSelectFragment : Fragment() {
 
     private  fun setVGCMode(mode : Char){
         Toast.makeText(activity.applicationContext, "Setting VGC Mode to $mode", Toast.LENGTH_SHORT).show()
-        val message: ByteArray = byteArrayOf('v'.toByte(), mode.toByte())
+        val message: ByteArray = byteArrayOf('H'.toByte(), mode.toByte())
         (activity.applicationContext as GlobalState).sendTcpMessage(message)
 
     }

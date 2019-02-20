@@ -10,31 +10,33 @@ THROTTLE  = 0b01110000
 VGC       = 0b00110000
 TOWBAR    = 0b01100000
 
+dir = [0,1,2,3]
+
 def setup(config):
     pass
 
+def setReverse(reverse):
+    if (reverse):
+        dir = [3,2,1,0]
+    else:
+        dir = [0,1,2,3]
 
 def setCarOutput(car, carOutput, forceSend):
-    if car == 'P':
-        prototyp(carOutput, forceSend)
-
-
-def prototyp(carOutput, forceSend):
     global last
     for i in range(4):                                  # Für jedes Rad
         if abs(last[0][i] - carOutput[0][i]) > angleThreshold or forceSend == 1:       # Lenkwinkel
             v = (carOutput[0][i] + 1) * 128                      # -1rad - 1rad
-            I2C.writeToSlave(LENKUNG + i, v)
+            I2C.writeToSlave(LENKUNG + dir[i], v)
             last[0][i] = carOutput[0][i]
 
         if abs(last[1][i] - carOutput[1][i]) > threshold or forceSend == 2:            # Motorleisung
             v = min((carOutput[1][i] + 1) * 128, 255)
-            I2C.writeToSlave(THROTTLE + i, v)
+            I2C.writeToSlave(THROTTLE + dir[i], v)
             last[1][i] = carOutput[1][i]
 
         if abs(last[2][i] - carOutput[2][i]) > threshold or forceSend == 3:            # VGC
             v = min((carOutput[2][i]) * 256, 255)
-            I2C.writeToSlave(VGC + i, v)
+            I2C.writeToSlave(VGC + dir[i], v)
             last[2][i] = carOutput[2][i]
 
     if abs(last[3] - carOutput[3]) > threshold or forceSend == 0:                      # Tow Bar

@@ -89,11 +89,8 @@ def setCarOutput(category, value):
     carOutput[category] = value
     outputChanged = True
 
-def setInput(input, steeringMode):
-    if steeringMode == 0:
-        r = relativeMotion.calcS(input[0], input[2])
-    elif steeringMode == 1:
-        r = relativeMotion.calcC(input[0], input[1], input[2])
+def setInput(angle, pwr):
+    r = relativeMotion.calc(angle, pwr)
 
     setCarOutput(0, r[0])
     setCarOutput(1, r[1])
@@ -104,14 +101,14 @@ def setup():
     CL.log(CL.INFO, "Beginning setup")
     globalVars()
 
-    server.setup(config, [setInput, optionManager.setProperty, getCarOutput, VGC.setMode, setCarOutput])
-    relativeMotion.setup(config)
+    server.setup(config, [setInput, optionManager.setProperty, getCarOutput, VGC.setMode, setCarOutput, relativeMotion.setMode, sendAll])
+    relativeMotion.setup(config, [server.sendData, setInput])
     VGC.setup(config)
     if 'USE_GPIO' in PROPERTIES:
         GPIO.setup(config)
         carOutputManager.setup(config)
     if 'USE_VISUALIZER' in PROPERTIES:
-        visualizer.setup(config)
+        visualizer.setup(config, [relativeMotion.setMode])
 
     CL.log(CL.INFO, "setup is complete")
 
@@ -128,10 +125,13 @@ def globalVars():
     forceOutput = 0
     nextTime = 0
 
+def sendAll():
+    relativeMotion.sendMode()
+
 
 if __name__ == '__main__':
     setup()
-    setInput((0, 0, 0), 0)
+    setInput(0, 0)
     CL.log(CL.INFO, "loop starting")
     while IS_ACTIVE:
         loop()

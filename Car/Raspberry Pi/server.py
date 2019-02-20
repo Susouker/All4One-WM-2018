@@ -6,9 +6,10 @@ import packetParser
 
 conns = []
 
-def setup(config, cbFunctions):
-    packetParser.setup(config, cbFunctions)
-    global PORT, HOSTNAME
+def setup(config, _cbFunctions):
+    packetParser.setup(config, _cbFunctions)
+    global PORT, HOSTNAME, cbFunctions
+    cbFunctions = _cbFunctions
     PORT = int(config.get('server', 'port'))
     HOSTNAME = config.get('server', 'hostname')
 
@@ -66,13 +67,14 @@ class SocketHandler(Thread):
             connHandler.setDaemon(True)
             connHandler.start()
             CL.log(CL.SERVER, "(%s) Client connected; Total number of connections is %s" % (addr[0], len(conns)))
+            cbFunctions[6]() # Send All Data to new Client
 
 
 def sendData(packetID, data):
     CL.log(CL.SERVERMSG, "Sending: %s; %s" % (packetID, data))
     msg = packetID + data
     for conn in conns:
-        try:
-            conn.send(msg)
-        except:
-            CL.log(CL.ERROR, "Send failed")
+        #try:
+        conn.send(msg.encode())
+        #except:
+        #    CL.log(CL.ERROR, "Send failed")

@@ -22,16 +22,14 @@ class DriveFragment : ControlFragment() {
     override fun sendValues(relativeX: Float, relativeY: Float) {
 
         var angle : Float = relativeX * Math.PI.toFloat() / 2
-        var speed : Float = relativeY
 
-        Log.d("Drive Fragment", "angle: $angle; speed: $speed")
+        Log.d("Drive Fragment", "angle: $angle; speed: $relativeY")
 
-        var byteBuffer = ByteBuffer.allocate(2 * 4)
-        byteBuffer.order(ByteOrder.LITTLE_ENDIAN)
-        byteBuffer.putFloat(angle)
-        byteBuffer.putFloat(speed)
 
-        var message: ByteArray = byteArrayOf('s'.toByte(), *byteBuffer.array())
+        var steering = (relativeX * 128 + 128).toByte()
+        var throttle = (relativeY * 128 + 128).toByte()
+
+        var message: ByteArray = byteArrayOf('s'.toByte(), steering, throttle)
 
         (activity.applicationContext as GlobalState).sendTcpMessage(message)
 

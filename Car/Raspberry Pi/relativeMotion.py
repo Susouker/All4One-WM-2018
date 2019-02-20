@@ -1,113 +1,90 @@
 from math import *
 
+mode = 20
 
-def setup(config):
-    global b, w, maxAngle
-    w = float(config.get('car', 'width'))
+def setup(config, _cbFunctions):
+    global cbFunctions, b, w, maxAngle, swfost
+    cbFunctions = _cbFunctions
+    w = float(config.get('car', 'width')) / 2
     b = float(config.get('car', 'wheelbase')) / 2
-    maxAngle = float(config.get('car', 'maxSteeringAngle'))
+    swfost = int(config.get('control', 'steeringWheelForOnSpotTurning'))
+
+def setMode(m):
+    global mode
+    mode = int(m)
+    sendMode()
+    cbFunctions[1](0, 0)
+
+def sendMode():
+    cbFunctions[0]('M', chr(mode))
 
 
-def calcS(angle, pwr):
-    angle = constrainAngle(angle)
-    angleL = 0
-    angleR = 0
-    pwrL = 1
-    pwrR = 1
-    if angle != 0:
-        a1 = abs(angle)
-        r1 = b / sin(a1)
-        r2 = sqrt(pow((sqrt(r1*r1-b*b)+w),2) + b*b)
-        a2 = asin(b/r2)
+def calc(angle, pwr):
+    pwr = min(max(pwr, -1), 1)
+    angle = min(max(angle, -pi/4), pi/4)
 
-        right = (angle > 0)
+    if mode == 0:                       # Full
+        return fullCalc(angle[0], angle[1], pwr)
 
-        angleR = angle       if right else -a2
-        angleL = a2 if right else angle
+    elif mode == 20:                    # Seitwärts
+        return ([angle]*4, [pwr]*4)
+    elif mode == 21:                    # Seitwärts
+        if swfost:
+            pwr = angle * 4/pi
+        return ([2*pi/6, -2*pi/6, -2*pi/6, 2*pi/6], [pwr, -pwr, -pwr, pwr])
 
-        pwrR = r1/r2 if right else 1
-        pwrL = 1     if right else r1/r2
+    elif mode == 28:                    # Auf der Stelle
+        if swfost:
+            pwr = angle * 4/pi
+        return fullCalc(0, 0, angle * 4/pi)
 
-    return ((angleR, angleL, -angleR, -angleL), power(pwr, pwrR, pwrL, pwrR, pwrL))
+    if angle == 0:                      # geradeaus
+        return ([0] * 4, [pwr] * 4)
 
+                                        # normal
+    isRight = 1
+    if angle < 0:
+        isRight = -1
+        angle = -angle
 
-def calcC(tcAngle, tcDist, pwr):
-    angleFR = 0
-    angleFL = 0
-    angleBR = 0
-    angleBL = 0
-    pwrFR = -1
-    pwrFL = -1
-    pwrBR = -1
-    pwrBL = -1
-
-    if tcDist == inf:
-        angleFR = tcAngle + pi/2
-        angleFL = tcAngle + pi/2
-        angleBR = tcAngle + pi/2
-        angleBL = tcAngle + pi/2
-
-    else:
-        a = tcAngle
-        x = tcDist * sin(a)
-        y = tcDist * cos(a)
-
-        rFR = hypot(w/2 - x, b-y)
-        r = rFR
-        rFL = hypot(-w/2 - x, b-y)
-        if(rFL > r):
-            r = rFL
-        rBR = hypot(w/2 - x, -b-y)
-        if(rBR > r):
-            r = rBR
-        rBL = hypot(-w/2 - x, -b-y)
-        if(rBL > r):
-            r = rBL
-
-        pwrFR = -rFR / r
-        pwrFL = rFL / r
-        pwrBR = -rBR / r
-        pwrBL = rBL / r
-
-        angleFR = -pi/2 + (atan2(w/2 - x, b-y))
-        angleFL = pi/2 + (atan2(-w/2 - x, b-y))
-        angleBR = -pi/2 + (atan2(w/2 - x, -b-y))
-        angleBL = pi/2 + (atan2(-w/2 - x, -b-y))
-
-    if (angleFR > pi/2):
-       angleFR = angleFR - pi
-       pwrFR *= -1
-    if (angleFL > pi/2):
-        angleFL = angleFL - pi
-        pwrFL *= -1
-    if (angleBR > pi/2):
-        angleBR = angleBR - pi
-        pwrBR *= -1
-    if (angleBL > pi/2):
-        angleBL = angleBL - pi
-        pwrBL *= -1
-    if (angleFR < -pi/2):
-        angleFR = pi + angleFR
-        pwrFR *= -1
-    if (angleFL < -pi/2):
-        angleFL = pi + angleFL
-        pwrFL *= -1
-    if (angleBR < -pi/2):
-        angleBR = pi + angleBR
-        pwrBR *= -1
-    if (angleBL < -pi/2):
-        angleBL = pi + angleBL
-        pwrBL *= -1
+    centerY = 0
+    if mode == 6:
+        centerY = -b
+    elif mode == 7:
+        centerY = b
+    centerX = ((b + abs(centerY)) / tan(angle) + w) * isRight
+    return fullCalc(centerX, centerY, pwr)
 
 
-    return ((angleFR, angleFL, angleBR, angleBL), power(pwr, pwrFR, pwrFL, pwrBR, pwrBL))
+def fullCalc(centerX, centerY, pwr):
+    maxRadius = 0
+    radii = [0,0,0,0]
+    xPos = [0,0,0,0]
+    yPos = [0,0,0,0]
+    angles = [0,0,0,0]
+    pwrs = [0,0,0,0]
+    flip = centerX > -w and centerX < w
 
-def power(pwr, pwrFR, pwrFL, pwrBR, pwrBL):
-    return (pwrFR * pwr, pwrFL * pwr, pwrBR * pwr, pwrBL * pwr)
+    for i in range(4):
+        isFront = (not (i >> 1))*2-1
+        isRight = (i & 1)*2-1
+        xPos[i] = w * isRight - centerX
+        yPos[i] = b * isFront - centerY
+        radii[i] = hypot(xPos[i], yPos[i])
+        maxRadius = max(maxRadius, radii[i])
 
-def constrainAngle(value):
-    if value > maxAngle:
-        value = maxAngle
-    elif value < -maxAngle:
-        value = -maxAngle
-    return value
+        if xPos[i] == 0:
+            angles[i] = 0  # sollte eig nicht vorkommen, aber man weiß ja nie
+        else:
+            angles[i] = atan(- yPos[i] / xPos[i])
+            if isRight:
+                angles[i] = min(max(angles[i], -2*pi/6), pi/4)
+            else:
+                angles[i] = min(max(angles[i], -pi/4), 2*pi/6)
+
+    for i in range(4):
+        pwrs[i] = radii[i] / maxRadius * pwr
+        if flip and i & 1:
+            pwrs[i] = -pwrs[i]
+
+    return (angles, pwrs)

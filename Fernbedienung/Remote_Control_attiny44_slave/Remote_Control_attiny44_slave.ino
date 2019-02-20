@@ -6,7 +6,7 @@
 */
 
 
-#define I2C_SLAVE_ADDRESS 0x4 // the 7-bit address (remember to change this when adapting this example)
+#define I2C_SLAVE_ADDRESS 0x4
 
 #include <TinyWireS.h>
 
@@ -20,8 +20,7 @@ void requestEvent()
   if (digitalRead(2) == LOW)
     val /= 2;
 
-  uint8_t v = val / 4;
-  v = 42;
+  uint8_t v = val>>2;
   TinyWireS.send(v);
 }
 
@@ -34,11 +33,11 @@ void requestEvent()
 */
 void receiveEvent(uint8_t howMany)
 {
-  if (howMany < 1 || howMany > TWI_RX_BUFFER_SIZE)
+  if (howMany == 0)
     return;
 
   uint8_t data;
-  while (howMany--)
+  while (TinyWireS.available())
     data = TinyWireS.receive();
 
   PORTB = data & 0b00000111;
@@ -60,7 +59,7 @@ void setup()
 
   TinyWireS.begin(I2C_SLAVE_ADDRESS);
   TinyWireS.onReceive(receiveEvent);
-  TinyWireS.onRequest(requestEvent);
+  TinyWireS.onRequest(requestEvent);  
 }
 
 void loop()

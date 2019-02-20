@@ -24,12 +24,13 @@ class TowBarFragment : ControlFragment() {
 
 
         Log.d("Tow Bar Fragment", "position $position")
-
+/*
         var byteBuffer = ByteBuffer.allocate(1 * 4)
         byteBuffer.order(ByteOrder.LITTLE_ENDIAN)
         byteBuffer.putFloat(position)
-
-        var message: ByteArray = byteArrayOf('b'.toByte(), *byteBuffer.array())
+*/
+        var tbPos = (position * 256).toByte()
+        var message: ByteArray = byteArrayOf('b'.toByte(), tbPos)
 
         (activity.applicationContext as GlobalState).sendTcpMessage(message)
 

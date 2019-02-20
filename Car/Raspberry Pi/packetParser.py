@@ -1,6 +1,7 @@
 import struct
 import routines
 import imp
+import consoleLog as CL
 
 def setup(config, _cbFunctions):
     global cbFunctions
@@ -15,49 +16,50 @@ def parse(data):
                 data = handlerFunctions[packetID](data[1:])
             except struct.error:
                 CL.log(CL.ERROR, "Invalid packet %s" % packetID)
+            except InvalidPacketException:
+                CL.log(CL.ERROR, "Invalid packet %s" % packetID)
         else:
             CL.log(CL.ERROR, "Invalid identifier %s" % packetID)
+            data = data[1:]
 
 
-def cbSimpleSteering(data):
-    r = struct.unpack('ff', data[0:4*2])
-    cbFunctions[0]((r[0], 0, -r[1]), 0)
-    return data[4*2:]
-
-
-def cbComplexSteering(data):
-    r = struct.unpack('fff', data[0:4*3])
-    cbFunctions[0]((r[0], r[1], -r[2]), 1)
-    return data[4*3:]
+def cbSteering(data):
+    if len(data) < 2:
+        raise InvalidPacketException
+    cbFunctions[0]((data[0] * 0.00625) - 0.8, (data[1] / 128) - 1)
+    return data[2:]
 
 
 def cbTowBar(data):
+    if len(data) < 4:
+        raise InvalidPacketException
     r = struct.unpack('f', data[0:4*1])
     cbFunctions[4](3, r[0])
     return data[4*1:]
 
 
-def cbRotation(data):
-    r = struct.unpack('ff', data[0:4*2])
-    vgc = VGC.calcVGC(r, 0)
-    SE.sendData(b'V', struct.pack('ffff', *vgc))
-    return data[4*2:]
+def cbSteeringMode(data):
+    if len(data) < 1:
+        raise InvalidPacketException
+    cbFunctions[5](data[0])
+    return data[1:]
 
+def cbVGCMode(data):
+    if len(data) < 1:
+        raise InvalidPacketException
+    cbFunctions[3](data[0])
+    return data[1:]
 
-def cbOptions(data):
-    identifier = data[0:1]
-    value = data[1]
-    cbFunctions[1](identifier, value)
-    return data[2:]
-
-
-def cbVGCModeSelect(data):
-    value = data[0:1]
-    cbFunctions[3](value)
+def cbSetReverse(data):
+    if len(data) < 1:
+        raise InvalidPacketException
+    cbFunctions[7](data[0])
     return data[1:]
 
 
 def cbRoutines(data):
+    if len(data) < 1:
+        raise InvalidPacketException
     value = data[0]
     imp.reload(routines)
     routines.do(cbFunctions)
@@ -65,11 +67,13 @@ def cbRoutines(data):
 
 
 handlerFunctions = {
-    b's': cbSimpleSteering,
-    b'c': cbComplexSteering,
+    b's': cbSteering,
     b'b': cbTowBar,
-    b't': cbOptions,
-    b'R': cbRotation,
-    b'v': cbVGCModeSelect,
     b'd': cbRoutines,
+    b'M': cbSteeringMode,
+    b'H': cbVGCMode,
+    b'Q': cbSetReverse,
 }
+
+class InvalidPacketException(Exception):
+    pass
