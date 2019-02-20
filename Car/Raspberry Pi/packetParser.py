@@ -47,8 +47,13 @@ def cbSteeringMode(data):
 def cbVGCMode(data):
     if len(data) < 1:
         raise InvalidPacketException
-    cbFunctions[3](data[0])
-    return data[1:]
+    mode = data[:1]
+    if mode == b'M':
+        cbFunctions[3](b'M', data[1] / 256)
+        return data[2:]
+    else:
+        cbFunctions[3](mode, 0)
+        return data[1:]
 
 def cbSetReverse(data):
     if len(data) < 1:

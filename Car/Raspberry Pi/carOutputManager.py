@@ -18,7 +18,7 @@ def setup(config):
 def setReverse(reverse):
     if (reverse):
         dir = [3,2,1,0]
-    else:
+    else:   
         dir = [0,1,2,3]
 
 def setCarOutput(car, carOutput, forceSend):

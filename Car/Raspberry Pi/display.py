@@ -19,7 +19,7 @@ def createPolygons():
 
     for i in range (4):
         isFront = (not (i >> 1))*2-1
-        isRight = (i & 1)*2-1
+        isRight = (not(i & 1))*2-1
         ce = (origin[0] + isRight*scl*width/2, origin[1] - isFront*scl*weelbase/2)
         wheelCenters.append(ce)
         c.create_line(origin[0], origin[1], ce[0], ce[1], fill='white', width = 2)

@@ -117,6 +117,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_routine_select_layout -> {
                 fragmentManager.beginTransaction().replace(R.id.content_frame, RoutineSelectFragment()).commit()
             }
+            R.id.nav_vgc_adjust_layout -> {
+                fragmentManager.beginTransaction().replace(R.id.content_frame, VGCAdjustFragment()).commit()
+            }
             R.id.nav_options_layout -> {
                 fragmentManager.beginTransaction().replace(R.id.content_frame, OptionsFragment()).commit()
             }

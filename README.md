@@ -33,7 +33,8 @@ Das erste Byte gibt den Typ der Nachricht an (packetID). Zu jeder packetID gibt 
 | L     | Licht       | 0: aus; 1: an; 2: automatisch |
 | B     | Buzzer      | 0: aus; 1: an; 2: automatisch |
 | M     | Lenkmodus   | 4: Normal 6: nur vorne 7: nur hinten 20: Seitwärts fahren 28: Auf der Stelle drehen |
-| H     | VGC         | F: Flat P: Oben A: Arti |
+| H     | VGC         | F: Flat P: Oben M: Manual (nächster Byte ist Höhe) |
+| W     | VGC Adjust  | yyyyyzxx, y: 5Bit Wert zum Anpassen, z: obere oder untere Grenze anpassen, x: welches Rad |
 | Q     | Reverse     | 0: normal 1: reverse |
 
 

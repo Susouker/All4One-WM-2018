@@ -16,4 +16,12 @@
     <string name="toast_connected">Verbunden!</string>
     <string name="toast_connecting">Verbinden...</string>
     <string name="toast_disconnected">Verbindung abgebrochen</string>
+    <string name="nav_vgc_adjust_name">VGC Trim</string>
+
+    <string-array name="wheels_array">
+        <item>FR</item>
+        <item>FL</item>
+        <item>BR</item>
+        <item>BL</item>
+    </string-array>
 </resources>

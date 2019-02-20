@@ -20,6 +20,10 @@
             android:icon="@drawable/ic_select"
             android:title="@string/nav_vgc_select_name" />
         <item
+            android:id="@+id/nav_vgc_adjust_layout"
+            android:icon="@drawable/ic_vgc_adjust"
+            android:title="@string/nav_vgc_adjust_name" />
+        <item
             android:id="@+id/nav_routine_select_layout"
             android:icon="@drawable/ic_select"
             android:title="@string/nav_routines_select_name" />

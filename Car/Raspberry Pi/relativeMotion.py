@@ -1,6 +1,6 @@
 from math import *
 
-mode = 20
+mode = 4
 
 def setup(config, _cbFunctions):
     global cbFunctions, b, w, maxAngle, swfost
@@ -67,7 +67,7 @@ def fullCalc(centerX, centerY, pwr):
 
     for i in range(4):
         isFront = (not (i >> 1))*2-1
-        isRight = (i & 1)*2-1
+        isRight = (not(i & 1))*2-1
         xPos[i] = w * isRight - centerX
         yPos[i] = b * isFront - centerY
         radii[i] = hypot(xPos[i], yPos[i])
