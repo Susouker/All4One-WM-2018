@@ -5,10 +5,12 @@ last = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], 0]
 angleThreshold = 0.02     # 0.02rad sind etwa 1.15°
 threshold = 0.05
 
-LENKUNG   = 0b00100000
-THROTTLE  = 0b01110000
-VGC       = 0b00110000
-TOWBAR    = 0b01100000
+LENKUNG    = 0b00100000
+THROTTLE   = 0b01110000
+VGC        = 0b00110000
+VGCADJ     = 0b00111000
+VGCADJSAVE = 0b00101000
+TOWBAR     = 0b01100000
 
 dir = [0,1,2,3]
 
@@ -18,10 +20,10 @@ def setup(config):
 def setReverse(reverse):
     if (reverse):
         dir = [3,2,1,0]
-    else:   
+    else:
         dir = [0,1,2,3]
 
-def setCarOutput(car, carOutput, forceSend):
+def sendCarOutput(carOutput, forceSend):
     global last
     for i in range(4):                                  # Für jedes Rad
         if abs(last[0][i] - carOutput[0][i]) > angleThreshold or forceSend == 1:       # Lenkwinkel
@@ -43,3 +45,8 @@ def setCarOutput(car, carOutput, forceSend):
         v = min((carOutput[3]) * 256, 255)
         I2C.writeToSlave(TOWBAR, v)
         last[3] = carOutput[3]
+
+def sendVGCadjustCommand(data):
+    whatToAdj = data & 0b00000111
+    value = data >> 3
+    I2C.writeToSlave(VGCADJ + whatToAdj, value)

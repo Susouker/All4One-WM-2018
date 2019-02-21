@@ -55,13 +55,12 @@ def loop():
 
         setCarOutput(2, VGC.calcVGC(t))
 
-        #Get input from Mouse Curosr if visualizer is used
         if 'VISUALIZER_AS_INPUT' in PROPERTIES:
             setInput(*visualizer.getInput())
 
         if 'USE_GPIO' in PROPERTIES:
             if outputChanged or forceOutput < 4:
-                carOutputManager.setCarOutput('P', carOutput, forceOutput)
+                carOutputManager.sendCarOutput(carOutput, forceOutput)
             forceOutput += 1
             if forceOutput > 1 / timeDelta:
                 forceOutput = 0
@@ -101,7 +100,7 @@ def setup():
     CL.log(CL.INFO, "Beginning setup")
     globalVars()
 
-    server.setup(config, [setInput, optionManager.setProperty, getCarOutput, VGC.setMode, setCarOutput, relativeMotion.setMode, sendAll])
+    server.setup(config, [setInput, optionManager.setProperty, getCarOutput, VGC.setMode, setCarOutput, relativeMotion.setMode, sendAll, carOutputManager.setReverse, carOutputManager.sendVGCadjustCommand])
     relativeMotion.setup(config, [server.sendData, setInput])
     VGC.setup(config)
     if 'USE_GPIO' in PROPERTIES:

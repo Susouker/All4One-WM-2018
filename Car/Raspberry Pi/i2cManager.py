@@ -20,4 +20,3 @@ def writeToSlave(identifier, value):
         if not address[slaveID] in disabledAddresses:
             CL.log(CL.ERROR, "During sending Data; " + str(address[slaveID]))
             disabledAddresses.append(address[slaveID])
-        return
