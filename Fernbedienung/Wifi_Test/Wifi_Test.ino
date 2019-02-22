@@ -2,7 +2,8 @@
 #include <WiFiClient.h>
 #include <Wire.h>
 
-#define SLAVE_ADR 0x04
+#define SLAVE0_ADR 0x04
+#define SLAVE1_ADR 0x05
 
 const char* ssid = "ADHV4K";
 const char* password = "MollisWinter2019";
@@ -16,8 +17,8 @@ WiFiClient client;
 long nextUpdate = 0;
 int refreshRate = 20;
 
-uint8_t butNum[7] = {16, 0, 2, 14, 12, 13, 15};
-bool butPressed[7] = {0, 0, 0, 0, 0, 0, 0};
+uint8_t numButs = 7
+bool butPressed[numButs] = {0, 0, 0, 0, 0, 0, 0};
 
 uint8_t steeringMode = 0;
 
@@ -110,7 +111,7 @@ void setModeLights(uint8_t newMode) {
   } else if (newMode == 28) {
     toWrite = 0b00000100;
   }
-  Wire.beginTransmission(SLAVE_ADR);
+  Wire.beginTransmission(SLAVE0_ADR);
   Serial.print("writing to i2c: ");
   Serial.println(toWrite);
   Wire.write(toWrite);
@@ -121,7 +122,7 @@ uint8_t lastSteering = 0;
 uint8_t lastThrottle = 0;
 
 void sendSteeringData(bool force) {
-  Wire.requestFrom(SLAVE_ADR, 1);
+  Wire.requestFrom(SLAVE0_ADR, 1);
 
   uint8_t throttle;
   if (Wire.available()) {
@@ -151,8 +152,16 @@ void sendSteeringData(bool force) {
 
 void refreshButtons() {
   bool tmp = false;
-  for (int i = 0; i < sizeof(butNum); i++) {
-    tmp = digitalRead(butNum[i]) == LOW;
+  uint8_t buttons = 0
+
+  Wire.requestFrom(SLAVE1_ADR, 1);
+  if (Wire.available())
+    buttons = Wire.read();
+  else
+    Serial.println("no Button input");
+
+  for (int i = 0; i < numButs; i++) {
+    tmp = (buttons >> i) & 1;
     if (butPressed[i] != tmp) {
       butPressed[i] = tmp;
       if (i < 5) {
