@@ -50,3 +50,4 @@ def sendVGCadjustCommand(data):
     whatToAdj = data & 0b00000111
     value = data >> 3
     I2C.writeToSlave(VGCADJ + whatToAdj, value)
+    I2C.writeToSlave(VGCADJSAVE, 0)
