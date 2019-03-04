@@ -58,13 +58,13 @@ def cbVGCMode(data):
 def cbSetReverse(data):
     if len(data) < 1:
         raise InvalidPacketException
-    cbFunctions[7](data[0])
+    cbFunctions[4](4, data[0])
     return data[1:]
 
 def cbVGCadjust(data):
     if len(data) < 1:
         raise InvalidPacketException
-    cbFunctions[8](data[0])
+    cbFunctions[7](data[0])
     return data[1:]
 
 

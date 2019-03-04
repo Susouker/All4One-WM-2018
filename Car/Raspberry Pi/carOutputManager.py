@@ -12,18 +12,17 @@ VGCADJ     = 0b00111000
 VGCADJSAVE = 0b00101000
 TOWBAR     = 0b01100000
 
-dir = [0,1,2,3]
-
 def setup(config):
     pass
 
-def setReverse(reverse):
+def sendCarOutput(carOutput, forceSend):
+
+    reverse = not carOutput[4] == 0
     if (reverse):
         dir = [3,2,1,0]
     else:
         dir = [0,1,2,3]
 
-def sendCarOutput(carOutput, forceSend):
     global last
     for i in range(4):                                  # Für jedes Rad
         if abs(last[0][i] - carOutput[0][i]) > angleThreshold or forceSend == 1:       # Lenkwinkel

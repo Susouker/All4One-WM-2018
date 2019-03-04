@@ -85,7 +85,10 @@ def getCarOutput():
 
 def setCarOutput(category, value):
     global carOutput, outputChanged
-    carOutput[category] = value
+    if not category < 0:
+        carOutput[category] = value
+    else:
+        carOutput = value
     outputChanged = True
 
 def setInput(angle, pwr):
@@ -100,7 +103,7 @@ def setup():
     CL.log(CL.INFO, "Beginning setup")
     globalVars()
 
-    server.setup(config, [setInput, optionManager.setProperty, getCarOutput, VGC.setMode, setCarOutput, relativeMotion.setMode, sendAll, carOutputManager.setReverse, carOutputManager.sendVGCadjustCommand])
+    server.setup(config, [setInput, optionManager.setProperty, getCarOutput, VGC.setMode, setCarOutput, relativeMotion.setMode, sendAll])#, carOutputManager.sendVGCadjustCommand])
     relativeMotion.setup(config, [server.sendData, setInput])
     VGC.setup(config)
     if 'USE_GPIO' in PROPERTIES:
@@ -119,7 +122,8 @@ def globalVars():
     (0,0,0,0),  # Lenkwinkel
     (0,0,0,0),  # Throttle
     (1,1,1,1),  # VGC
-    0.5]          # Tow Bar
+    0.5,        # Tow Bar
+    0]          # Reverse
     startTime = time.time()
     forceOutput = 0
     nextTime = 0
