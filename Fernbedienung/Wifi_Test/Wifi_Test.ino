@@ -17,7 +17,7 @@ WiFiClient client;
 long nextUpdate = 0;
 int refreshRate = 20;
 
-uint8_t numButs = 7
+const uint8_t numButs = 7;
 bool butPressed[numButs] = {0, 0, 0, 0, 0, 0, 0};
 
 uint8_t steeringMode = 0;
@@ -28,11 +28,6 @@ void setup() {
   Serial.begin(115200);
   WiFi.begin(ssid, password);
   Serial.println("");
-
-  for (int i = 0; i < sizeof(butNum); i++) {
-    pinMode(butNum[i], INPUT_PULLUP);
-    butPressed[i] = digitalRead(butNum[i]) == LOW;
-  }
 
   Wire.begin();
 
@@ -152,16 +147,16 @@ void sendSteeringData(bool force) {
 
 void refreshButtons() {
   bool tmp = false;
-  uint8_t buttons = 0
+  uint8_t buttonValues = 0;
 
   Wire.requestFrom(SLAVE1_ADR, 1);
   if (Wire.available())
-    buttons = Wire.read();
+    buttonValues = Wire.read();
   else
     Serial.println("no Button input");
 
   for (int i = 0; i < numButs; i++) {
-    tmp = (buttons >> i) & 1;
+    tmp = (buttonValues >> i) & 1;
     if (butPressed[i] != tmp) {
       butPressed[i] = tmp;
       if (i < 5) {

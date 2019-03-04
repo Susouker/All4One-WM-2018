@@ -103,7 +103,11 @@ def setup():
     CL.log(CL.INFO, "Beginning setup")
     globalVars()
 
+<<<<<<< HEAD
     server.setup(config, [setInput, optionManager.setProperty, getCarOutput, VGC.setMode, setCarOutput, relativeMotion.setMode, sendAll])#, carOutputManager.sendVGCadjustCommand])
+=======
+    server.setup(config, [setInput, optionManager.setProperty, getCarOutput, VGC.setMode, setCarOutput, relativeMotion.setMode, sendAll])#, carOutputManager.setReverse, carOutputManager.sendVGCadjustCommand])
+>>>>>>> c38740d37c66f15a218f28f8446d0f3a1d5e02f7
     relativeMotion.setup(config, [server.sendData, setInput])
     VGC.setup(config)
     if 'USE_GPIO' in PROPERTIES:
